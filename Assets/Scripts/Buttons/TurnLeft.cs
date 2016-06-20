@@ -26,12 +26,12 @@ public class TurnLeft : Button
 
     public void WhilePressed()
     {
-        playerObject = GameObject.FindGameObjectWithTag("Player");
-        PlayerBehaviors.turnPlayer(playerObject, InputConstants.INPUT_LEFT);
+        turnRight();
     }
 
     public void turnRight()
     {
-
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        PlayerBehaviors.turnPlayer(playerObject, InputConstants.INPUT_LEFT);
     }
 }

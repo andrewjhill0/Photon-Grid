@@ -20,23 +20,22 @@ public class BoostButton: Button {
         //A public function in the selectable class which button inherits from.
         if (IsPressed())
         {
-			if(PlayerBehaviors.IS_BOOST_READY)
-			{
-				PlayerBehaviors.IS_BOOST_READY = false;
-            	playerObject = GameObject.FindGameObjectWithTag("Player");
-            	StartCoroutine (PlayerBehaviors.activateSpeedBoost(playerObject));
-			}
-        	
+            WhilePressed();        	
         }
     }
 
     public void WhilePressed()
     {
-        
+        turnRight();
     }
 
     public void turnRight()
     {
-
+        if (PlayerBehaviors.IS_BOOST_READY)
+        {
+            PlayerBehaviors.IS_BOOST_READY = false;
+            playerObject = GameObject.FindGameObjectWithTag("Player");
+            StartCoroutine(PlayerBehaviors.activateSpeedBoost(playerObject));
+        }
     }
 }

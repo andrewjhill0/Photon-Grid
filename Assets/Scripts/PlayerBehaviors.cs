@@ -7,7 +7,7 @@ namespace Controllers
     public static class PlayerBehaviors
     {
 
-        public static readonly int TURNING_SPEED = 2;
+        public static readonly int TURNING_SPEED = 75;
         public static bool IS_BOOST_READY = true;
         public static readonly int boostDuration = 2; // why is this static?
         public static readonly int boostCooldown = 2;  // cooldown starts after the boost duration ends.
@@ -20,7 +20,7 @@ namespace Controllers
 
             Vector3 direction = (input == InputConstants.INPUT_LEFT ? -vehicle.transform.up : vehicle.transform.up);
 
-            vehicle.transform.Rotate(direction * TURNING_SPEED);
+            vehicle.transform.Rotate(direction * TURNING_SPEED * Time.deltaTime);  //deltaTime is needed to decouple turning from the frame rate of the game.
         }
 
         public static IEnumerator activateSpeedBoost(GameObject player) 
