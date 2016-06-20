@@ -31,9 +31,9 @@ public class BoostButton: Button {
 
     public void turnRight()
     {
-        if (PlayerBehaviors.IS_BOOST_READY)
+        if (PlayerBehaviors.isBoostReady)
         {
-            PlayerBehaviors.IS_BOOST_READY = false;
+            PlayerBehaviors.isBoostReady = false;
             playerObject = GameObject.FindGameObjectWithTag("Player");
             StartCoroutine(PlayerBehaviors.activateSpeedBoost(playerObject));
         }

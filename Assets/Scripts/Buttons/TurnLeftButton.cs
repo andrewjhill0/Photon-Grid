@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using Constants;
 using Controllers;
+using Constants;
 
-public class TurnRight: Button {
+public class TurnLeftButton : Button
+{
 
     private GameObject playerObject;
-
     // Use this for initialization
     protected override void Start()
     {
@@ -32,6 +32,6 @@ public class TurnRight: Button {
     public void turnRight()
     {
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        PlayerBehaviors.turnPlayer(playerObject, InputConstants.INPUT_RIGHT);
+        PlayerBehaviors.turnPlayer(playerObject, InputConstants.INPUT_LEFT);
     }
 }

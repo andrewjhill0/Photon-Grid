@@ -22,7 +22,7 @@ namespace Controllers {
 
 
 			speed = PlayerBehaviors.speed;
-	        PlayerBehaviors.IS_BOOST_READY = true;
+	        PlayerBehaviors.isBoostReady = true;
 	        wallReady = true;
 	        
 		}
@@ -80,8 +80,8 @@ namespace Controllers {
 
 
 		public bool isBoostReady {
-			get { return PlayerBehaviors.IS_BOOST_READY; }
-			set { PlayerBehaviors.IS_BOOST_READY = value;	}
+			get { return PlayerBehaviors.isBoostReady; }
+			set { PlayerBehaviors.isBoostReady = value;	}
 		}
 
 		public bool isWallReady {

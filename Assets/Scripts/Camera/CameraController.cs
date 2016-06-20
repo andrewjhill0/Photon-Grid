@@ -12,7 +12,9 @@ namespace Controllers {
 		void Start () {
 		}
 
-		void LateUpdate () {
+        // we want to use LateUpdate() because it is always executed after all the other Update()'s called on this frame.  
+        // Since this is a follow camera, we want to follow the updated movements
+		void LateUpdate () {  
 			if (playerController.isAlive) {
 				// Follow the player's transform
 				Vector3 cameraY = new Vector3 (0, 15, 0);
@@ -21,9 +23,6 @@ namespace Controllers {
 
 				// Follow the player's forward direction
 				transform.LookAt (player.transform.position);
-
-
-
 			}
 			StartCoroutine (CheckIfPlayerDead ());
 		}
@@ -39,7 +38,7 @@ namespace Controllers {
 			}
 		}
 
-		private void goToBirdsEyeView()
+		private void goToBirdsEyeView()  //We want to look down at the whole playing field after we die or the game ends.
 		{
 			inBirdsEyeView = true;
 			

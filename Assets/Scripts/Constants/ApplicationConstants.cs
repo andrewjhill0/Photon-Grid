@@ -1,5 +1,5 @@
 namespace Constants {
-	public static class GameConstants
+	public static class ApplicationConstants
 	{
         #region Level Names
         public static readonly int MAIN_MENU = 0;
