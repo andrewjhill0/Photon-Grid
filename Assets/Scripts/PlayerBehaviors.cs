@@ -7,11 +7,11 @@ namespace Controllers
     public static class PlayerBehaviors
     {
 
-        public static int TURNING_SPEED = 2;
+        public static readonly int TURNING_SPEED = 2;
         public static bool IS_BOOST_READY = true;
-        public static int boostDuration = 2; // why is this static?
-        public static int boostCooldown = 2;  // cooldown starts after the boost duration ends.
-        public static float speedBoost = 5.0f;
+        public static readonly int boostDuration = 2; // why is this static?
+        public static readonly int boostCooldown = 2;  // cooldown starts after the boost duration ends.
+        public static readonly float speedBoost = 5.0f;
         public static float speed = 15;
 
         public static void turnPlayer(GameObject player, int input)

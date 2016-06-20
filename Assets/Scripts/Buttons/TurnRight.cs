@@ -9,7 +9,7 @@ public class TurnRight: Button {
     private GameObject playerObject;
 
     // Use this for initialization
-    void Start()
+    protected override void Start()
     {
 
     }

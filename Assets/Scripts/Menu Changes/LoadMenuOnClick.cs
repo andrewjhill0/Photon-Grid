@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Constants;
+using UnityEngine.SceneManagement;
 
 public class LoadMenuOnClick : MonoBehaviour {
 
@@ -9,6 +10,6 @@ public class LoadMenuOnClick : MonoBehaviour {
     public void LoadScene(int level)
     {
        // loadingImage.SetActive(true);
-        Application.LoadLevel(level);
+        SceneManager.LoadScene(level);
     }
 }
