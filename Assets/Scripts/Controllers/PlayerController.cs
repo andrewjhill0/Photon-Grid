@@ -5,35 +5,31 @@ using System.Collections;
 namespace Controllers {
 	public class PlayerController : MonoBehaviour {
 
-		private float speed;
+        private float speed;
 		public bool isAlive = true;
 	    public float turningSpeed;
 	    private bool wallReady;
 	    public static int wallSpawnRate = 2;
 		private static InputController inputController;
 		private Rigidbody vehicle;
+        public Transform walls;
 
 
 		// Use this for initialization
 		void Start () {
-
+            speed = PlayerConstants.BASE_VEHICLE_SPEED;
 			inputController = new InputController (this);
-
-
-
-			speed = PlayerBehaviors.speed;
 	        PlayerBehaviors.isBoostReady = true;
 	        wallReady = true;
+
+            vehicle = GetComponent<Rigidbody>();
+            vehicle.velocity = Vector3.forward * speed;
 	        
 		}
 		
 		// Update is called once per frame
 		void Update () {
-			speed = PlayerBehaviors.speed;
-			Vector3 movement = new Vector3(0,0,3);
-			vehicle = GetComponent<Rigidbody>();
-			vehicle.transform.Translate (Vector3.forward*Time.deltaTime*speed);
-	            
+			
 		}
 		
 		void FixedUpdate()	{
