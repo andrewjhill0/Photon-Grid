@@ -21,7 +21,7 @@ namespace Behaviors
 
         public static IEnumerator activateSpeedBoost(GameObject player)
         {
-            Cooldowns cooldowns = getCooldownsInstance();
+            Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
 
             Rigidbody vehicle = player.GetComponent<Rigidbody>();
 
@@ -43,7 +43,7 @@ namespace Behaviors
 
         public static IEnumerator ejectWall(GameObject player, Transform wall)
         {
-            Cooldowns cooldowns = getCooldownsInstance();
+            Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
 
             if(cooldowns.isWallReady)
             {
@@ -54,33 +54,11 @@ namespace Behaviors
 
                 MonoBehaviour.Instantiate(wall, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
 
-                yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE);
+                yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE / Mathf.Sqrt(vehicle.velocity.sqrMagnitude));
                 cooldowns.isWallReady = true;
             }
         }
-        public static IEnumerator spawnWall(GameObject player)  // IEnumerators are basically coroutine signatures (methods)
-        {
-            /*
-            Cooldowns cooldowns = getCooldownsInstance();
 
-            Rigidbody vehicle = player.GetComponent<Rigidbody>();
-
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.AddComponent<Rigidbody>();
-            cube.tag = "Wall";
-            cube.name = "Player Wall";
-            cube.transform.position = vehicle.position - (new Vector3(0, 0, 5));
-            */
-            yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE);
-
-        }
-
-        private static Cooldowns getCooldownsInstance()
-        {
-            GameObject globalVariables = GameObject.FindGameObjectsWithTag(GlobalTags.GLOBAL_VARIABLES)[0];
-            GlobalStartup global = globalVariables.GetComponent<GlobalStartup>();
-            Cooldowns cooldowns = global.cooldowns;
-            return cooldowns;
-        }
+        
     }
 }

@@ -17,12 +17,11 @@ namespace Controllers {
 		// Use this for initialization
 		void Start () {
             speed = PlayerConstants.BASE_VEHICLE_SPEED;
-			inputController = new InputController (this);
-	        //PlayerBehaviors.isBoostReady = true;
-	        //wallReady = true;
-
             vehicle = GetComponent<Rigidbody>();
             vehicle.velocity = Vector3.forward * speed;
+
+			inputController = new InputController (this);
+
 	        
 		}
 		
@@ -47,12 +46,13 @@ namespace Controllers {
 
 		
 
-	    void onCollisionEnter(Collision other)
+	    void OnCollisionEnter(Collision other)
 	    {
 	        if (other.collider.tag == "Wall")
 	        {
 	            Debug.Log("Collision");
 	            gameObject.SetActive(false);
+                isAlive = false;
 	        }
 	    }
 	}

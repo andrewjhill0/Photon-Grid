@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Controllers;
+using Global;
 
 namespace Controllers {
 	public class CameraController : MonoBehaviour {
@@ -29,7 +30,10 @@ namespace Controllers {
 
 		private IEnumerator CheckIfPlayerDead ()
 		{
-			if (!playerController.isAlive && !inBirdsEyeView) 
+            GameState gameState = GetGlobalObjects.getGameState();
+
+
+			if (gameState.getGameOver() && !inBirdsEyeView) 
 			{
 				// Adjust the camera to bird's-eye view
 				goToBirdsEyeView();
