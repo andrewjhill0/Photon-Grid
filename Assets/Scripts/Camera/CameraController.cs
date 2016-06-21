@@ -17,7 +17,7 @@ namespace Controllers {
 		void LateUpdate () {  
 			if (playerController.isAlive) {
 				// Follow the player's transform
-				Vector3 cameraY = new Vector3 (0, 15, 0);
+				Vector3 cameraY = new Vector3 (0, 10, 0);
 				transform.position = (player.transform.position - player.transform.forward * 25)
 					+ cameraY;
 

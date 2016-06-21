@@ -3,16 +3,10 @@ using System.Collections;
 using Constants;
 using Global;
 
-namespace Behaviors
+namespace Behaviors 
 {
-    public static class PlayerBehaviors
+    public static class PlayerBehaviors 
     {
-        // TO-DO
-        // We probably should rewrite this so that each player's isBoostReady is stored within the player's object.  
-        // This class should be static, but we can only handle one player with these methods, since there's no way to handle 2 different, concurrent values of isBoostReady
-        // Perhaps we can move isBoostReady and speed into the activateSpeedBoost method and this will solve the problem, as there can be many concurrent but separate calls to the same method.
-        private static bool isBoostReady = true;
-        private static bool wallReady = false;
         
 
         public static void turnPlayer(GameObject player, int input)
@@ -27,11 +21,10 @@ namespace Behaviors
 
         public static IEnumerator activateSpeedBoost(GameObject player)
         {
-            GameObject globalVariables = GameObject.FindGameObjectsWithTag(GlobalTags.GLOBAL_VARIABLES)[0];
-            GlobalStartup global = globalVariables.GetComponent<GlobalStartup>();
-            Cooldowns cooldowns = global.cooldowns;
-            
+            Cooldowns cooldowns = getCooldownsInstance();
+
             Rigidbody vehicle = player.GetComponent<Rigidbody>();
+
             if (cooldowns.isBoostReady == true)
             {
                 cooldowns.isBoostReady = false;
@@ -48,30 +41,46 @@ namespace Behaviors
             }
         }
 
-        public static void ejectWall(GameObject player, Transform wall)
+        public static IEnumerator ejectWall(GameObject player, Transform wall)
         {
-            Rigidbody vehicle = player.GetComponent<Rigidbody>();
-            //Vector3 behindVehicle = vehicle.position - 
+            Cooldowns cooldowns = getCooldownsInstance();
 
-            //Instantiate(brick, new Vector3(x, y, 0), Quaternion.identity);
+            if(cooldowns.isWallReady)
+            {
+                cooldowns.isWallReady = false;
+                Rigidbody vehicle = player.GetComponent<Rigidbody>();
+                float alignToFloor = vehicle.transform.position.y - (PlayerConstants.WALL_HEIGHT / 2); 
+                Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * 10 - new Vector3(0.0f, alignToFloor, 0.0f);  
 
-            return;
+                MonoBehaviour.Instantiate(wall, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
+
+                yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE);
+                cooldowns.isWallReady = true;
+            }
         }
         public static IEnumerator spawnWall(GameObject player)  // IEnumerators are basically coroutine signatures (methods)
         {
-            wallReady = true;
+            /*
+            Cooldowns cooldowns = getCooldownsInstance();
+
             Rigidbody vehicle = player.GetComponent<Rigidbody>();
-            yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE);
 
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.AddComponent<Rigidbody>();
             cube.tag = "Wall";
             cube.name = "Player Wall";
             cube.transform.position = vehicle.position - (new Vector3(0, 0, 5));
-
+            */
             yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE);
-            wallReady = false;
 
+        }
+
+        private static Cooldowns getCooldownsInstance()
+        {
+            GameObject globalVariables = GameObject.FindGameObjectsWithTag(GlobalTags.GLOBAL_VARIABLES)[0];
+            GlobalStartup global = globalVariables.GetComponent<GlobalStartup>();
+            Cooldowns cooldowns = global.cooldowns;
+            return cooldowns;
         }
     }
 }

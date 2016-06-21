@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Constants;
 using System.Collections;
+using Behaviors;
 
 namespace Controllers {
 	public class PlayerController : MonoBehaviour {
@@ -8,7 +9,7 @@ namespace Controllers {
         private float speed;
 		public bool isAlive = true;
 	    public float turningSpeed;
-		private static InputController inputController;
+		private static InputController inputController;  // do we need this?
 		private Rigidbody vehicle;
         public Transform walls;
 
@@ -27,7 +28,7 @@ namespace Controllers {
 		
 		// Update is called once per frame
 		void Update () {
-			
+            StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
 		}
 		
 		void FixedUpdate()	{

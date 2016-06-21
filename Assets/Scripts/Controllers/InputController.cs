@@ -3,7 +3,7 @@ using Constants;
 using System.Collections;
 
 namespace Controllers {
-	public class InputController {
+	public class InputController { //do we need this?
 
 		private PlayerController player;
 

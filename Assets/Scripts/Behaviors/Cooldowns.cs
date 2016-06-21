@@ -7,6 +7,7 @@ namespace Behaviors
     {
         protected static Cooldowns instance;
         public bool isBoostReady;
+        public bool isWallReady;
         /**
            Returns the instance of this singleton.
         */
@@ -26,6 +27,7 @@ namespace Behaviors
         private Cooldowns()
         {
             isBoostReady = true;
+            isWallReady = true;
         }
     }
 }
