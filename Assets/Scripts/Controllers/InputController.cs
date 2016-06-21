@@ -13,7 +13,7 @@ namespace Controllers {
 		}
 
 		public int update() {
-			if (Input.GetKeyDown("space") && player.isBoostReady)
+			if (Input.GetKeyDown("space"))
 				return InputConstants.INPUT_BOOST;
 			if (Input.GetKey ("left"))
 				return InputConstants.INPUT_LEFT;

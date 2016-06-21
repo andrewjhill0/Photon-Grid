@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Constants;
 using Controllers;
+using Behaviors;
 
 public class BoostButton: Button {
 
@@ -26,16 +27,16 @@ public class BoostButton: Button {
 
     public void WhilePressed()
     {
-        turnRight();
+        boost();
     }
 
-    public void turnRight()
+    public void boost()
     {
-        if (PlayerBehaviors.isBoostReady)
-        {
-            PlayerBehaviors.isBoostReady = false;
+        //if (PlayerBehaviors.isBoostReady)
+        //{
+            //PlayerBehaviors.isBoostReady = false;
             playerObject = GameObject.FindGameObjectWithTag("Player");
             StartCoroutine(PlayerBehaviors.activateSpeedBoost(playerObject));
-        }
+        //}
     }
 }

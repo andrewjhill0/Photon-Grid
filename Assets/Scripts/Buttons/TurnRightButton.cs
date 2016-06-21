@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Constants;
 using Controllers;
+using Behaviors;
 
 public class TurnRightButton: Button {
 
