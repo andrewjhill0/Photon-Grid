@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Controllers;
 
 namespace Global
 {
@@ -27,6 +28,23 @@ namespace Global
         public static GameObject[] getPlayerArray()
         {
             return GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER);
+        }
+
+        public static GameObject getPlayer(int playerNum)
+        {
+            return getGameState().getPlayer(playerNum);
+        }
+
+        public static GameObject getControllablePlayer()
+        {
+            foreach(GameObject player in getGameState().getAllPlayers())
+            {
+                if (player.GetComponent<PlayerController>().IsControlledPlayer)
+                {
+                    return player;
+                }
+            }
+            return null;
         }
     }
 }

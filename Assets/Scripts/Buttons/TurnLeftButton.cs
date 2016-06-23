@@ -4,11 +4,11 @@ using UnityEngine.UI;
 using Controllers;
 using Constants;
 using Behaviors;
+using Global;
 
 public class TurnLeftButton : Button
 {
 
-    private GameObject playerObject;
     // Use this for initialization
     protected override void Start()
     {
@@ -32,7 +32,8 @@ public class TurnLeftButton : Button
 
     public void turnRight()
     {
-        playerObject = GameObject.FindGameObjectWithTag("Player");
+        GameObject playerObject;
+        playerObject = GetGlobalObjects.getControllablePlayer();
         PlayerBehaviors.turnPlayer(playerObject, InputConstants.INPUT_LEFT);
     }
 }

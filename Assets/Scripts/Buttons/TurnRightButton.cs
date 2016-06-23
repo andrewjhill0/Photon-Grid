@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Constants;
 using Controllers;
 using Behaviors;
+using Global;
 
 public class TurnRightButton: Button {
 
@@ -32,7 +33,8 @@ public class TurnRightButton: Button {
 
     public void turnRight()
     {
-        playerObject = GameObject.FindGameObjectWithTag("Player");
+        GameObject playerObject;
+        playerObject = GetGlobalObjects.getControllablePlayer();
         PlayerBehaviors.turnPlayer(playerObject, InputConstants.INPUT_RIGHT);
     }
 }

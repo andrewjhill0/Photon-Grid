@@ -4,10 +4,10 @@ using UnityEngine.UI;
 using Constants;
 using Controllers;
 using Behaviors;
+using Global;
 
 public class BoostButton: Button {
 
-    private GameObject playerObject;
 
     // Use this for initialization
     protected override void Start()
@@ -32,11 +32,8 @@ public class BoostButton: Button {
 
     public void boost()
     {
-        //if (PlayerBehaviors.isBoostReady)
-        //{
-            //PlayerBehaviors.isBoostReady = false;
-            playerObject = GameObject.FindGameObjectWithTag("Player");
-            StartCoroutine(PlayerBehaviors.activateSpeedBoost(playerObject));
-        //}
+        GameObject playerObject;
+        playerObject = GetGlobalObjects.getControllablePlayer();
+        StartCoroutine(PlayerBehaviors.activateSpeedBoost(playerObject));
     }
 }

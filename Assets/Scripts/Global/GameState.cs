@@ -15,18 +15,34 @@ namespace Global
         {
             players = GetGlobalObjects.getPlayerArray();
             gameOver = checkIfAllPlayersDead();
-
+            assignPlayerNumbers();
+            assignControllablePlayer();
+            Debug.Log("breakpoint");
         }
 
         // Update is called once per frame
         void Update()
         {
             gameOver = checkIfAllPlayersDead();
+            if(gameOver)
+            {
+                // end the game after so many seconds.
+            }
         }
 
         public bool getGameOver() 
         {
             return gameOver;
+        }
+
+        public GameObject getPlayer(int id)
+        {
+            return players[id];
+        }
+
+        public GameObject[] getAllPlayers()
+        {
+            return players;
         }
 
         private bool checkIfAllPlayersDead()
@@ -48,6 +64,19 @@ namespace Global
                 allDead = true;
             }
             return allDead;
+        }
+
+        private void assignPlayerNumbers()
+        {
+            for(int i = 0; i < players.Length; i++)
+            {
+                players[i].tag = "Player " + i;
+            }
+        }
+
+        private void assignControllablePlayer()
+        {
+            players[1].GetComponent<PlayerController>().IsControlledPlayer = true;
         }
     }
 }

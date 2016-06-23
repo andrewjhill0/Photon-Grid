@@ -7,7 +7,7 @@ namespace Controllers {
 	public class CameraController : MonoBehaviour {
 
 		public GameObject player;
-		public PlayerController playerController; 
+		public PlayerController playerController;  // TODO this can be derived in runtime, so we should make it private and let the script handle this, not the Unity GUI 
 		private bool inBirdsEyeView = false;
 		
 		void Start () {

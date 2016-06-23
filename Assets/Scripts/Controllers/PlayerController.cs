@@ -6,10 +6,12 @@ using Behaviors;
 namespace Controllers {
 	public class PlayerController : MonoBehaviour {
 
+        private bool isControlledPlayer;
+        private int playerNum;
         private float speed;
 		public bool isAlive = true;
 	    public float turningSpeed;
-		private static InputController inputController;  // do we need this?
+		//private static InputController inputController;  // do we need this?
 		private Rigidbody vehicle;
         public Transform walls;
 
@@ -18,9 +20,9 @@ namespace Controllers {
 		void Start () {
             speed = PlayerConstants.BASE_VEHICLE_SPEED;
             vehicle = GetComponent<Rigidbody>();
-            vehicle.velocity = Vector3.forward * speed;
+            vehicle.velocity = vehicle.transform.forward * speed;
 
-			inputController = new InputController (this);
+			//inputController = new InputController (this);
 
 	        
 		}
@@ -44,7 +46,28 @@ namespace Controllers {
 				turnPlayer (InputConstants.INPUT_RIGHT);*/
 		}
 
-		
+        public bool IsControlledPlayer
+        {
+            get
+            {
+                return this.isControlledPlayer;
+            }
+            set
+            {
+                this.isControlledPlayer = value;
+            }
+        }
+        public int PlayerNum
+        {
+            get
+            {
+                return this.playerNum;
+            }
+            set
+            {
+                this.playerNum = value;
+            }
+        }
 
 	    void OnCollisionEnter(Collision other)
 	    {
