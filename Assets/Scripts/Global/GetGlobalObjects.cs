@@ -12,9 +12,10 @@ namespace Global
     {
         public static Cooldowns getCooldownsInstance()
         {
-            GameState gameState = getGameState();
-            Cooldowns cooldowns = gameState.cooldowns;
-            return cooldowns;
+            //GameState gameState = getGameState();
+            //Cooldowns cooldowns = gameState.cooldowns;
+            //return cooldowns;
+            return Cooldowns.Instance;
         }
 
         public static GameState getGameState()
@@ -54,6 +55,11 @@ namespace Global
         public static int getNumberOfPlayers()
         {
             return getGameState().getAllPlayers().Length;
+        }
+
+        public static AIManager getAIManager()
+        {
+            return AIManager.instance;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Controllers {
 	public class PlayerController : MonoBehaviour {
 
         private bool isControlledPlayer;
+        public bool isAI;
         private int playerNum;
         private float speed;
 		public bool isAlive = true;
@@ -31,6 +32,10 @@ namespace Controllers {
 		// Update is called once per frame
 		void Update () {
             StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
+            if(isAI)
+            {
+                AIBehaviors.update(gameObject);
+            }
 		}
 		
 		void FixedUpdate()	{
