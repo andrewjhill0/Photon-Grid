@@ -18,8 +18,9 @@ namespace Controllers {
 
         // we want to use LateUpdate() because it is always executed after all the other Update()'s called on this frame.  
         // Since this is a follow camera, we want to follow the updated movements
-		void LateUpdate () {  
-			if (playerController.isAlive) {
+		void LateUpdate () {
+            if (!GetGlobalObjects.getGameState().getGameOver())
+            {
 				// Follow the player's transform
 				transform.position = (player.transform.position - player.transform.forward * CameraConstants.STANDARD_CAMERA_DISTANCE_MULT) + CameraConstants.STANDARD_CAMERA_HEIGHT;
 
@@ -38,7 +39,8 @@ namespace Controllers {
 				// Adjust the camera to bird's-eye view
 				goToBirdsEyeView();
 				Debug.Log("BIRD EYE VIEW");
-				yield return null;
+                yield return new WaitForSeconds(10);
+                Application.Quit();
 			}
 		}
 

@@ -11,7 +11,7 @@ namespace Behaviors
     {
         
 
-        public static void turnPlayer(GameObject player, int input)
+        public static void turnPlayer(GameObject player, int input) // 
         {
             Rigidbody vehicle = player.GetComponent<Rigidbody>();
 
@@ -53,8 +53,9 @@ namespace Behaviors
             {
                 cooldowns.IsWallReady[playerNum] = false;
                 Rigidbody vehicle = player.GetComponent<Rigidbody>();
-                float alignToFloor = vehicle.transform.position.y - (PlayerConstants.WALL_HEIGHT / 2); 
-                Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * PlayerConstants.WALL_SPAWN_DISTANCE - new Vector3(0.0f, alignToFloor, 0.0f);
+                float alignToFloor = PlayerConstants.WALL_HEIGHT;
+                Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * PlayerConstants.WALL_SPAWN_DISTANCE;
+                behindVehicle.y = alignToFloor;
 
                 GameObject spawnedWall;
                 spawnedWall = (GameObject)MonoBehaviour.Instantiate(wallPrefab, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
@@ -70,7 +71,7 @@ namespace Behaviors
         {
             int playerNum = player.GetComponent<PlayerController>().PlayerNum;
             wall.GetComponent<WallController>().PlayerID = playerNum;
-            Material mat = (Material)Resources.Load(GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
+            Material mat = (Material)Resources.Load("Walls/" + GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
 
             wall.GetComponent<Renderer>().material = mat;
         }

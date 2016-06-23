@@ -3,6 +3,7 @@ using Constants;
 using System.Collections;
 using Behaviors;
 using Global;
+using Controller;
 
 namespace Controllers {
 	public class PlayerController : MonoBehaviour {
@@ -13,7 +14,7 @@ namespace Controllers {
         private float speed;
 		public bool isAlive = true;
 	    public float turningSpeed;
-		//private static InputController inputController;  // do we need this?
+		private static InputController inputController;  // do we need this?
 		private Rigidbody vehicle;
         public GameObject walls;
 
@@ -24,7 +25,7 @@ namespace Controllers {
             vehicle = GetComponent<Rigidbody>();
             vehicle.velocity = vehicle.transform.forward * speed;
 
-			//inputController = new InputController (this);
+			inputController = new InputController (this);
 
 	        
 		}
@@ -41,15 +42,15 @@ namespace Controllers {
 		void FixedUpdate()	{
 
 	
-			/*int input = inputController.update ();
+			int input = inputController.update ();
 
 
 			if (input == InputConstants.INPUT_BOOST)
-				StartCoroutine (activateSpeedBoost());
+				StartCoroutine (PlayerBehaviors.activateSpeedBoost(gameObject));
 			else if (input == InputConstants.INPUT_LEFT)
-				turnPlayer (InputConstants.INPUT_LEFT);
+				PlayerBehaviors.turnPlayer (gameObject, InputConstants.INPUT_LEFT);
 			else if (input == InputConstants.INPUT_RIGHT)
-				turnPlayer (InputConstants.INPUT_RIGHT);*/
+				PlayerBehaviors.turnPlayer (gameObject, InputConstants.INPUT_RIGHT);
 		}
 
         public bool IsControlledPlayer
@@ -79,7 +80,7 @@ namespace Controllers {
 	    {
 	        if (other.collider.tag == GlobalTags.WALL)
 	        {
-                Debug.Log("Wall Collision for Player" + GetComponent<PlayerController>().PlayerNum);
+                Debug.Log(other.gameObject.GetComponent<WallController>().PlayerID + "'s wall Collision for Player" + GetComponent<PlayerController>().PlayerNum);
 	            gameObject.SetActive(false);
                 isAlive = false;
 	        }

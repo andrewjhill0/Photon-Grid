@@ -7,8 +7,7 @@ using Behaviors;
 using Global;
 
 public class TurnRightButton: Button {
-
-    private GameObject playerObject;
+   
 
     // Use this for initialization
     protected override void Start()

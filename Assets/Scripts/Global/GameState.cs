@@ -62,7 +62,7 @@ namespace Global
                     aliveCount++;
                 }
             }
-            if (aliveCount == 0)
+            if (aliveCount <= 1)
             {
                 Debug.Log("End game");
                 allDead = true;
