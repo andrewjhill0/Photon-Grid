@@ -3,6 +3,7 @@ using System.Collections;
 using Constants;
 using Global;
 using Controllers;
+using Controller;
 
 namespace Behaviors 
 {
@@ -43,7 +44,7 @@ namespace Behaviors
             }
         }
 
-        public static IEnumerator ejectWall(GameObject player, Transform wall)
+        public static IEnumerator ejectWall(GameObject player, GameObject wallPrefab)
         {
             Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
             int playerNum = player.GetComponent<PlayerController>().PlayerNum;
@@ -53,14 +54,25 @@ namespace Behaviors
                 cooldowns.IsWallReady[playerNum] = false;
                 Rigidbody vehicle = player.GetComponent<Rigidbody>();
                 float alignToFloor = vehicle.transform.position.y - (PlayerConstants.WALL_HEIGHT / 2); 
-                Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * 10 - new Vector3(0.0f, alignToFloor, 0.0f); 
- 
+                Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * PlayerConstants.WALL_SPAWN_DISTANCE - new Vector3(0.0f, alignToFloor, 0.0f);
 
-                MonoBehaviour.Instantiate(wall, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
+                GameObject spawnedWall;
+                spawnedWall = (GameObject)MonoBehaviour.Instantiate(wallPrefab, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
+                setWallToPlayer(player, spawnedWall);
 
                 yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RESPAWN_TIME / Mathf.Sqrt(vehicle.velocity.sqrMagnitude));
                 cooldowns.IsWallReady[playerNum] = true;
             }
+        }
+
+
+        private static void setWallToPlayer(GameObject player, GameObject wall)
+        {
+            int playerNum = player.GetComponent<PlayerController>().PlayerNum;
+            wall.GetComponent<WallController>().PlayerID = playerNum;
+            Material mat = (Material)Resources.Load(GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
+
+            wall.GetComponent<Renderer>().material = mat;
         }
 
 

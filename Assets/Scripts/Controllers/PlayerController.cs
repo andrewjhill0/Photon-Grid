@@ -15,7 +15,7 @@ namespace Controllers {
 	    public float turningSpeed;
 		//private static InputController inputController;  // do we need this?
 		private Rigidbody vehicle;
-        public Transform walls;
+        public GameObject walls;
 
 
 		// Use this for initialization
@@ -83,6 +83,12 @@ namespace Controllers {
 	            gameObject.SetActive(false);
                 isAlive = false;
 	        }
+            if (other.collider.tag == GlobalTags.BOUNDARY)
+            {
+                Debug.Log("Boundary Collision for Player" + GetComponent<PlayerController>().PlayerNum);
+                gameObject.SetActive(false);
+                isAlive = false;
+            }
             else 
             {
                 int numPlayers = GetGlobalObjects.getNumberOfPlayers();
@@ -96,6 +102,7 @@ namespace Controllers {
                     }
                 }
             }
+
 	    }
 	}
 }

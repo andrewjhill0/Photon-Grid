@@ -16,5 +16,6 @@ namespace Constants
         public static readonly float BASE_VEHICLE_SPEED = 45; // bigger means faster vehicle
         public static readonly int WALL_SPAWN_RESPAWN_TIME = 10; //bigger means more time between walls
         public static readonly float WALL_HEIGHT = 0.5f; // it's the wall height for all vehicle-spawned walls.  should be updated if you change the prefab's setting in Unity.
+        public static readonly int WALL_SPAWN_DISTANCE = 30;  // the distance behind the vehicle the wall will appear.  Should be updated if vehicle size is changed in Unity.
     }
 }
