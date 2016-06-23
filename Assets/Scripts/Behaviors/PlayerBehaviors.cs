@@ -2,6 +2,7 @@
 using System.Collections;
 using Constants;
 using Global;
+using Controllers;
 
 namespace Behaviors 
 {
@@ -22,12 +23,13 @@ namespace Behaviors
         public static IEnumerator activateSpeedBoost(GameObject player)
         {
             Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
+            int playerNum = player.GetComponent<PlayerController>().PlayerNum;
 
             Rigidbody vehicle = player.GetComponent<Rigidbody>();
 
-            if (cooldowns.isBoostReady == true)
+            if (cooldowns.IsBoostReady[playerNum] == true)
             {
-                cooldowns.isBoostReady = false;
+                cooldowns.IsBoostReady[playerNum] = false;
 
                 vehicle.velocity *= PlayerConstants.BOOST_AMOUNT;
                 yield return new WaitForSeconds(PlayerConstants.BOOST_DURATION);
@@ -37,17 +39,18 @@ namespace Behaviors
                 yield return new WaitForSeconds(PlayerConstants.BOOST_COOLDOWN);
                 Debug.Log("Boost Off Cooldown");
 
-                cooldowns.isBoostReady = true;
+                cooldowns.IsBoostReady[playerNum] = true;
             }
         }
 
         public static IEnumerator ejectWall(GameObject player, Transform wall)
         {
             Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
+            int playerNum = player.GetComponent<PlayerController>().PlayerNum;
 
-            if(cooldowns.isWallReady)
+            if (cooldowns.IsWallReady[playerNum])
             {
-                cooldowns.isWallReady = false;
+                cooldowns.IsWallReady[playerNum] = false;
                 Rigidbody vehicle = player.GetComponent<Rigidbody>();
                 float alignToFloor = vehicle.transform.position.y - (PlayerConstants.WALL_HEIGHT / 2); 
                 Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * 10 - new Vector3(0.0f, alignToFloor, 0.0f);  
@@ -55,7 +58,7 @@ namespace Behaviors
                 MonoBehaviour.Instantiate(wall, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
 
                 yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE / Mathf.Sqrt(vehicle.velocity.sqrMagnitude));
-                cooldowns.isWallReady = true;
+                cooldowns.IsWallReady[playerNum] = true;
             }
         }
 

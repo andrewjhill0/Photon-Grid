@@ -1,23 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Controllers;
+using Behaviors;
 
 namespace Global
 {
     public class GameState : MonoBehaviour
     {
         GameObject[] players;
-        bool gameOver;
+        bool gameOver; 
+        public Cooldowns cooldowns;
 
 
         // Use this for initialization
         void Start()
         {
-            players = GetGlobalObjects.getPlayerArray();
+            players = GetGlobalObjects.getInitialPlayers();
             gameOver = checkIfAllPlayersDead();
             assignPlayerNumbers();
             assignControllablePlayer();
-            Debug.Log("breakpoint");
+            Debug.Log("breakpoint"); 
+            
+            cooldowns = Cooldowns.Instance;
         }
 
         // Update is called once per frame
@@ -71,6 +75,7 @@ namespace Global
             for(int i = 0; i < players.Length; i++)
             {
                 players[i].tag = "Player " + i;
+                players[i].GetComponent<PlayerController>().PlayerNum = i;
             }
         }
 

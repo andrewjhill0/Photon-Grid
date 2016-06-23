@@ -10,11 +10,11 @@ namespace Global
     class GlobalStartup : MonoBehaviour
     {
 
-        public Cooldowns cooldowns;
+        
         // Use this for initialization
         void Start()
         {
-            cooldowns = Cooldowns.Instance;
+            
         }
 
         // Update is called once per frame

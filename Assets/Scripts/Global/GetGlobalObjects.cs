@@ -12,9 +12,8 @@ namespace Global
     {
         public static Cooldowns getCooldownsInstance()
         {
-            GameObject globalVariables = GameObject.FindGameObjectsWithTag(GlobalTags.GLOBAL_VARIABLES)[0];
-            GlobalStartup global = globalVariables.GetComponent<GlobalStartup>();
-            Cooldowns cooldowns = global.cooldowns;
+            GameState gameState = getGameState();
+            Cooldowns cooldowns = gameState.cooldowns;
             return cooldowns;
         }
 
@@ -25,9 +24,14 @@ namespace Global
             return gameState;
         }
 
-        public static GameObject[] getPlayerArray()
+        public static GameObject[] getInitialPlayers()
         {
             return GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER);
+        }
+
+        public static GameObject[] getPlayerArray()
+        {
+            return getGameState().getAllPlayers();
         }
 
         public static GameObject getPlayer(int playerNum)
