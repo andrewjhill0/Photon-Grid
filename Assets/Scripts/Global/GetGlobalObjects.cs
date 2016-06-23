@@ -50,5 +50,10 @@ namespace Global
             }
             return null;
         }
+
+        public static int getNumberOfPlayers()
+        {
+            return getGameState().getAllPlayers().Length;
+        }
     }
 }

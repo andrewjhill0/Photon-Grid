@@ -2,6 +2,7 @@
 using Constants;
 using System.Collections;
 using Behaviors;
+using Global;
 
 namespace Controllers {
 	public class PlayerController : MonoBehaviour {
@@ -71,12 +72,25 @@ namespace Controllers {
 
 	    void OnCollisionEnter(Collision other)
 	    {
-	        if (other.collider.tag == "Wall")
+	        if (other.collider.tag == GlobalTags.WALL)
 	        {
-	            Debug.Log("Collision");
+                Debug.Log("Wall Collision for Player" + GetComponent<PlayerController>().PlayerNum);
 	            gameObject.SetActive(false);
                 isAlive = false;
 	        }
+            else 
+            {
+                int numPlayers = GetGlobalObjects.getNumberOfPlayers();
+                for(int i = 0; i < numPlayers; i++)
+                {
+                    if(other.collider.tag == GlobalTags.PLAYERS[i])
+                    {
+                        Debug.Log(other.collider.tag + " and Player" + GetComponent<PlayerController>().PlayerNum + " ran into each other. BOOM!");
+                        gameObject.SetActive(false);
+                        isAlive = false;
+                    }
+                }
+            }
 	    }
 	}
 }
