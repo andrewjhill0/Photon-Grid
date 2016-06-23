@@ -16,7 +16,7 @@ namespace Behaviors
 
             Vector3 direction = (input == InputConstants.INPUT_LEFT ? -vehicle.transform.up : vehicle.transform.up);
             
-            vehicle.velocity = Quaternion.AngleAxis((100 * Time.deltaTime), direction) * vehicle.velocity;
+            vehicle.velocity = Quaternion.AngleAxis((PlayerConstants.TURNING_SPEED * Time.deltaTime), direction) * vehicle.velocity;
             vehicle.rotation = Quaternion.LookRotation(vehicle.velocity);
         }
 
@@ -53,14 +53,17 @@ namespace Behaviors
                 cooldowns.IsWallReady[playerNum] = false;
                 Rigidbody vehicle = player.GetComponent<Rigidbody>();
                 float alignToFloor = vehicle.transform.position.y - (PlayerConstants.WALL_HEIGHT / 2); 
-                Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * 10 - new Vector3(0.0f, alignToFloor, 0.0f);  
+                Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * 10 - new Vector3(0.0f, alignToFloor, 0.0f); 
+ 
 
                 MonoBehaviour.Instantiate(wall, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
 
-                yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RATE / Mathf.Sqrt(vehicle.velocity.sqrMagnitude));
+                yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RESPAWN_TIME / Mathf.Sqrt(vehicle.velocity.sqrMagnitude));
                 cooldowns.IsWallReady[playerNum] = true;
             }
         }
+
+
 
         
     }

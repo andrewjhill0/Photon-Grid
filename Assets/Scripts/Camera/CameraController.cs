@@ -2,15 +2,18 @@
 using System.Collections;
 using Controllers;
 using Global;
+using Constants;
 
 namespace Controllers {
 	public class CameraController : MonoBehaviour {
 
-		public GameObject player;
-		public PlayerController playerController;  // TODO this can be derived in runtime, so we should make it private and let the script handle this, not the Unity GUI 
+		private GameObject player;
+		private PlayerController playerController;  
 		private bool inBirdsEyeView = false;
 		
 		void Start () {
+            player = GetGlobalObjects.getControllablePlayer();
+            playerController = player.GetComponent<PlayerController>();
 		}
 
         // we want to use LateUpdate() because it is always executed after all the other Update()'s called on this frame.  
@@ -18,9 +21,7 @@ namespace Controllers {
 		void LateUpdate () {  
 			if (playerController.isAlive) {
 				// Follow the player's transform
-				Vector3 cameraY = new Vector3 (0, 10, 0);
-				transform.position = (player.transform.position - player.transform.forward * 25)
-					+ cameraY;
+				transform.position = (player.transform.position - player.transform.forward * CameraConstants.STANDARD_CAMERA_DISTANCE_MULT) + CameraConstants.STANDARD_CAMERA_HEIGHT;
 
 				// Follow the player's forward direction
 				transform.LookAt (player.transform.position);
@@ -31,7 +32,6 @@ namespace Controllers {
 		private IEnumerator CheckIfPlayerDead ()
 		{
             GameState gameState = GetGlobalObjects.getGameState();
-
 
 			if (gameState.getGameOver() && !inBirdsEyeView) 
 			{
@@ -45,15 +45,8 @@ namespace Controllers {
 		private void goToBirdsEyeView()  //We want to look down at the whole playing field after we die or the game ends.
 		{
 			inBirdsEyeView = true;
-			
-			Vector3 newPosition = new Vector3(0f, 1454f, 0);
-			transform.position = newPosition;
-
-			Vector3 relativePos = new Vector3(0f,0f,0f) - transform.position;
-			Quaternion rotation = Quaternion.LookRotation(relativePos);
-			transform.rotation = rotation;
-
+            transform.position = CameraConstants.BIRDS_EYE_POSITION;
+            transform.rotation = CameraConstants.BIRDS_EYE_ROTATION;
 		}
-
 	}
 }

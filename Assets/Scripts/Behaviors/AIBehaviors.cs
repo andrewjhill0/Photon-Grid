@@ -10,7 +10,7 @@ namespace Behaviors
 {
     public static class AIBehaviors
     {
-        public static void update(GameObject player)
+        public static void update(GameObject player) //this will be run every frame
         {
             System.Random rnd = new System.Random();
             double turnDirection = rnd.NextDouble();

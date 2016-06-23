@@ -81,7 +81,7 @@ namespace Global
 
         private void assignControllablePlayer()
         {
-            players[1].GetComponent<PlayerController>().IsControlledPlayer = true;
+            players[2].GetComponent<PlayerController>().IsControlledPlayer = true;
         }
     }
 }
