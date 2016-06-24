@@ -21,7 +21,6 @@ namespace Global
             gameOver = checkIfAllPlayersDead();
             assignPlayerNumbers();
             assignControllablePlayer();
-            Debug.Log("breakpoint"); 
             
             cooldowns = Cooldowns.Instance; // create an instance of the Cooldowns singleton class after players have been initialized.
 
@@ -75,7 +74,6 @@ namespace Global
             }
             if (aliveCount <= 1)
             {
-                Debug.Log("End game");
                 allDead = true;
             }
             return allDead;
