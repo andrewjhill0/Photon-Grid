@@ -33,10 +33,7 @@ namespace Controllers {
 		// Update is called once per frame
 		void Update () {
             StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
-            if(isAI)
-            {
-                AIBehaviors.update(gameObject);
-            }
+            
 		}
 		
 		void FixedUpdate()	{

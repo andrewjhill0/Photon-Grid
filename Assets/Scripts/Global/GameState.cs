@@ -15,13 +15,24 @@ namespace Global
         // Use this for initialization
         void Start()
         {
+            //QualitySettings.vSyncCount = 0;
+            //Application.targetFrameRate = 60;
             players = GetGlobalObjects.getInitialPlayers();
             gameOver = checkIfAllPlayersDead();
             assignPlayerNumbers();
             assignControllablePlayer();
             Debug.Log("breakpoint"); 
             
-            cooldowns = Cooldowns.Instance;
+            cooldowns = Cooldowns.Instance; // create an instance of the Cooldowns singleton class after players have been initialized.
+
+            foreach(GameObject player in players) // now we need to setup the AIManager class
+            {
+                if(player.GetComponent<PlayerController>().isAI)
+                {
+                    AIManager.instance.AiPlayerObjects.Add(player);
+                    AIManager.instance.AiPlayers.Add(player.GetComponent<PlayerController>().PlayerNum);
+                }
+            }
         }
 
         // Update is called once per frame
@@ -81,7 +92,7 @@ namespace Global
 
         private void assignControllablePlayer()
         {
-            players[2].GetComponent<PlayerController>().IsControlledPlayer = true;
+            players[6].GetComponent<PlayerController>().IsControlledPlayer = true;
         }
     }
 }
