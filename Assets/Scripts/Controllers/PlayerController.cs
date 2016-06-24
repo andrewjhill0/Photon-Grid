@@ -38,16 +38,19 @@ namespace Controllers {
 		
 		void FixedUpdate()	{
 
-	
-			int input = inputController.update ();
+            if (isControlledPlayer)
+            {
+                int input = inputController.update();
 
 
-			if (input == InputConstants.INPUT_BOOST)
-				StartCoroutine (PlayerBehaviors.activateSpeedBoost(gameObject));
-			else if (input == InputConstants.INPUT_LEFT)
-				PlayerBehaviors.turnPlayer (gameObject, InputConstants.INPUT_LEFT);
-			else if (input == InputConstants.INPUT_RIGHT)
-				PlayerBehaviors.turnPlayer (gameObject, InputConstants.INPUT_RIGHT);
+                if (input == InputConstants.INPUT_BOOST)
+                    StartCoroutine(PlayerBehaviors.activateSpeedBoost(gameObject));
+                else if (input == InputConstants.INPUT_LEFT)
+                    PlayerBehaviors.turnPlayer(gameObject, InputConstants.INPUT_LEFT);
+                else if (input == InputConstants.INPUT_RIGHT)
+                    PlayerBehaviors.turnPlayer(gameObject, InputConstants.INPUT_RIGHT);
+            }
+
 		}
 
         public bool IsControlledPlayer

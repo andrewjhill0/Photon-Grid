@@ -90,7 +90,7 @@ namespace Global
 
         private void assignControllablePlayer()
         {
-            players[6].GetComponent<PlayerController>().IsControlledPlayer = true;
+            players[5].GetComponent<PlayerController>().IsControlledPlayer = true;
         }
     }
 }
