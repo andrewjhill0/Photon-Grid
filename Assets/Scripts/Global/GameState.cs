@@ -21,12 +21,13 @@ namespace Global
             gameOver = checkIfAllPlayersDead();
             assignPlayerNumbers();
             assignControllablePlayer();
+            setAIPlayers();
             
             cooldowns = Cooldowns.Instance; // create an instance of the Cooldowns singleton class after players have been initialized.
 
             foreach(GameObject player in players) // now we need to setup the AIManager class
             {
-                if(player.GetComponent<PlayerController>().isAI)
+                if(player.GetComponent<PlayerController>().IsAI)
                 {
                     AIManager.instance.AiPlayerObjects.Add(player);
                     AIManager.instance.AiPlayers.Add(player.GetComponent<PlayerController>().PlayerNum);
@@ -37,7 +38,7 @@ namespace Global
         // Update is called once per frame
         void Update()
         {
-            gameOver = checkIfAllPlayersDead();
+            //gameOver = checkIfAllPlayersDead();
             if(gameOver)
             {
                 // end the game after so many seconds.
@@ -90,7 +91,15 @@ namespace Global
 
         private void assignControllablePlayer()
         {
-            players[5].GetComponent<PlayerController>().IsControlledPlayer = true;
+            players[0].GetComponent<PlayerController>().IsControlledPlayer = true;
+        }
+
+        private void setAIPlayers()
+        {
+            for (int i = 1; i < players.Length; i++ )
+            {
+                players[i].GetComponent<PlayerController>().IsAI = true;
+            }
         }
     }
 }

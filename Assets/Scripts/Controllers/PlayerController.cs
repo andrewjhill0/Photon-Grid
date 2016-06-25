@@ -9,7 +9,7 @@ namespace Controllers {
 	public class PlayerController : MonoBehaviour {
 
         private bool isControlledPlayer;
-        public bool isAI;
+        private bool isAI;
         private int playerNum;
         private float speed;
 		public bool isAlive = true;
@@ -76,6 +76,17 @@ namespace Controllers {
             }
         }
 
+        public bool IsAI 
+        {
+            get
+            {
+                return this.isAI;
+            }
+            set
+            {
+                this.isAI = value;
+            }
+        }
 	    void OnCollisionEnter(Collision other)
 	    {
 	        if (other.collider.tag == GlobalTags.WALL)
@@ -105,6 +116,7 @@ namespace Controllers {
             }
 
 	    }
-	}
+
+    }
 }
 
