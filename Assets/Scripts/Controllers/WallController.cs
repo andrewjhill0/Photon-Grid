@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
 namespace Controller
 {
-    public class WallController : MonoBehaviour
+    public class WallController : NetworkBehaviour
     {
         private int playerID; //who does this wall belong to
 

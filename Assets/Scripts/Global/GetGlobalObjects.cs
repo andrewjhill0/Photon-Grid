@@ -44,7 +44,7 @@ namespace Global
         {
             foreach(GameObject player in getGameState().getAllPlayers())
             {
-                if (player.GetComponent<PlayerController>().IsControlledPlayer)
+                if (player.GetComponent<PlayerController>().isLocalPlayer)
                 {
                     return player;
                 }

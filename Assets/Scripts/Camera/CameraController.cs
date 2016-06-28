@@ -3,6 +3,7 @@ using System.Collections;
 using Controllers;
 using Global;
 using Constants;
+using UnityEngine.Networking;
 
 namespace Controllers {
 	public class CameraController : MonoBehaviour {
@@ -19,15 +20,18 @@ namespace Controllers {
         // we want to use LateUpdate() because it is always executed after all the other Update()'s called on this frame.  
         // Since this is a follow camera, we want to follow the updated movements
 		void LateUpdate () {
-            if (!GetGlobalObjects.getGameState().getGameOver())
+            if (NetworkServer.active)
             {
-				// Follow the player's transform
-				transform.position = (player.transform.position - player.transform.forward * CameraConstants.STANDARD_CAMERA_DISTANCE_MULT) + CameraConstants.STANDARD_CAMERA_HEIGHT;
+                if (!GetGlobalObjects.getGameState().getGameOver())
+                {
+                    // Follow the player's transform
+                    transform.position = (player.transform.position - player.transform.forward * CameraConstants.STANDARD_CAMERA_DISTANCE_MULT) + CameraConstants.STANDARD_CAMERA_HEIGHT;
 
-				// Follow the player's forward direction
-				transform.LookAt (player.transform.position);
-			}
-			StartCoroutine (CheckIfPlayerDead ());
+                    // Follow the player's forward direction
+                    transform.LookAt(player.transform.position);
+                }
+                StartCoroutine(CheckIfPlayerDead());
+            }
 		}
 
 		private IEnumerator CheckIfPlayerDead ()

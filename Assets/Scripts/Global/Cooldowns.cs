@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Global;
+using UnityEngine.Networking;
 
-namespace Behaviors
+namespace Global
 {
-    public class Cooldowns 
+    public class Cooldowns
     {
+        //[SyncVar]
         protected static Cooldowns instance;
         private bool[] isBoostReady;
         private bool[] isWallReady;

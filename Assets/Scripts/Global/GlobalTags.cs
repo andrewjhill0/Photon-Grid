@@ -7,6 +7,27 @@ namespace Global
 {
     public static class GlobalTags
     {
+        #region UI
+
+        public static readonly string NUM_AI_SLIDER = "NumAI Slider";
+        public static readonly string COLOR_SLIDER = "Color Slider";
+
+        #endregion
+
+        #region Network
+
+        public static readonly string NETWORK_MANAGER = "Network Manager";
+
+        #endregion
+
+        #region Scene Names
+
+        public static readonly string LOADING_SCREEN = "Loading Screen Menu";
+
+        #endregion
+
+
+
         public static readonly string GLOBAL_VARIABLES = "GlobalVariables";
         public static readonly string AIMANAGER = "AIManager";
         public static readonly string PLAYER = "Player";

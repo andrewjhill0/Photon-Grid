@@ -4,14 +4,17 @@ using System.Collections;
 using Behaviors;
 using Global;
 using Controller;
+using UnityEngine.Networking;
 
 namespace Controllers {
-	public class PlayerController : MonoBehaviour {
+	public class PlayerController : NetworkBehaviour {
 
-        private bool isControlledPlayer;
+        private bool isControlledPlayer; // Truncated.  We don't need this anymore due to the network framework.  IsLocalPlayer is sufficient.
         private bool isAI;
         private int playerNum;
+        [SyncVar]
         private float speed;
+        [SyncVar]
 		public bool isAlive = true;
 	    public float turningSpeed;
 		private static InputController inputController;  // do we need this?
@@ -38,10 +41,9 @@ namespace Controllers {
 		
 		void FixedUpdate()	{
 
-            if (isControlledPlayer)
+            if (isLocalPlayer)
             {
                 int input = inputController.update();
-
 
                 if (input == InputConstants.INPUT_BOOST)
                     StartCoroutine(PlayerBehaviors.activateSpeedBoost(gameObject));
@@ -75,7 +77,6 @@ namespace Controllers {
                 this.playerNum = value;
             }
         }
-
         public bool IsAI 
         {
             get
