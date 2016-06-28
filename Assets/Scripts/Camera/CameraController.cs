@@ -20,8 +20,7 @@ namespace Controllers {
         // we want to use LateUpdate() because it is always executed after all the other Update()'s called on this frame.  
         // Since this is a follow camera, we want to follow the updated movements
 		void LateUpdate () {
-            if (NetworkServer.active)
-            {
+
                 if (!GetGlobalObjects.getGameState().getGameOver())
                 {
                     // Follow the player's transform
@@ -31,7 +30,7 @@ namespace Controllers {
                     transform.LookAt(player.transform.position);
                 }
                 StartCoroutine(CheckIfPlayerDead());
-            }
+            
 		}
 
 		private IEnumerator CheckIfPlayerDead ()

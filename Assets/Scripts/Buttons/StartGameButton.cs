@@ -8,6 +8,7 @@ namespace Buttons
 {
     public class StartGameButton : MonoBehaviour
     {
+        public int numPlayers = 0;
 
         // Use this for initialization
         void Start()
@@ -25,13 +26,18 @@ namespace Buttons
         {
             GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().setSettings();
             NetworkManager.singleton.StartHost();
-            NetworkManager.singleton.ServerChangeScene(GlobalTags.LOADING_SCREEN);
+            //NetworkManager.singleton.ServerChangeScene(GlobalTags.LOADING_SCREEN);
         }
 
         public void startSinglePlayerGame()
         {
 
             NetworkManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
+        }
+
+        public void updateNumPlayers()
+        {
+            numPlayers = GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER).Length;
         }
     }
 }

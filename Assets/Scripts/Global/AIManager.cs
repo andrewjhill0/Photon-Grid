@@ -20,61 +20,40 @@ namespace Global
         void Awake()
         {
             //Check if instance already exists
-            if (instance == null)
-
-                //if not, set instance to this
-                instance = this;
+            if (instance == null)       instance = this;
 
             //If instance already exists and it's not this:
-            else if (instance != this)
+            else if (instance != this)  Destroy(gameObject);
 
-                //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
-                Destroy(gameObject);
-
-            //Sets this to not be destroyed when reloading scene
             DontDestroyOnLoad(gameObject);
-
-            //Get a component reference to the attached BoardManager script
-            //boardScript = GetComponent<BoardManager>();
-
-            //Call the InitGame function to initialize the first level 
-            InitGame();
         }
 
-        //Initializes the game for each level.
-        void InitGame()
-        {
-            //Call the SetupScene function of the BoardManager script, pass it current level number.
-            //boardScript.SetupScene(level);
-
-        }
 
         //Update is called every frame.
         void Update()
         {
-            /*List<GameObject> aiPlayerObjects;
-
-            for(int i = 0; i < )
-             * */
-            foreach(GameObject player in AiPlayerObjects)
+            if (GameState.instance.gameReady)
             {
-                System.Random rnd = new System.Random();
-                double turnDirection = rnd.NextDouble();
+                foreach (GameObject player in AiPlayerObjects)
+                {
+                    System.Random rnd = new System.Random();
+                    double turnDirection = rnd.NextDouble();
 
-                if (turnDirection <= 0.5) // turn left
-                {
-                    PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_LEFT);
-                    if (turnDirection < AIConstants.BOOST_FREQ)
+                    if (turnDirection <= 0.5) // turn left
                     {
-                        boostAIPlayer(player);
+                        PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_LEFT);
+                        if (turnDirection < AIConstants.BOOST_FREQ)
+                        {
+                            boostAIPlayer(player);
+                        }
                     }
-                }
-                else // turn right
-                {
-                    PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_RIGHT);
-                    if (turnDirection > 1 - AIConstants.BOOST_FREQ)
+                    else // turn right
                     {
-                        boostAIPlayer(player);
+                        PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_RIGHT);
+                        if (turnDirection > 1 - AIConstants.BOOST_FREQ)
+                        {
+                            boostAIPlayer(player);
+                        }
                     }
                 }
             }

@@ -5,6 +5,8 @@ using Behaviors;
 using Global;
 using Controller;
 using UnityEngine.Networking;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace Controllers {
 	public class PlayerController : NetworkBehaviour {
@@ -15,7 +17,7 @@ namespace Controllers {
         [SyncVar]
         private float speed;
         [SyncVar]
-		public bool isAlive = true;
+		public bool isAlive = false;
 	    public float turningSpeed;
 		private static InputController inputController;  // do we need this?
 		private Rigidbody vehicle;
@@ -24,12 +26,14 @@ namespace Controllers {
 
 		// Use this for initialization
 		void Start () {
-            speed = PlayerConstants.BASE_VEHICLE_SPEED;
-            vehicle = GetComponent<Rigidbody>();
-            vehicle.velocity = vehicle.transform.forward * speed;
+            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
+            {
+                speed = PlayerConstants.BASE_VEHICLE_SPEED;
+                vehicle = GetComponent<Rigidbody>();
+                vehicle.velocity = vehicle.transform.forward * speed;
 
-			inputController = new InputController (this);
-
+                inputController = new InputController(this);
+            }
 	        
 		}
 		

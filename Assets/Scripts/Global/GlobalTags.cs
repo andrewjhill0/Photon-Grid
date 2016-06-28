@@ -17,13 +17,15 @@ namespace Global
         #region Network
 
         public static readonly string NETWORK_MANAGER = "Network Manager";
+        public static readonly string SPAWN_POSITION = "Spawn Position";
 
         #endregion
 
-        #region Scene Names
+        #region Scenes
 
         public static readonly string LOADING_SCREEN = "Loading Screen Menu";
         public static readonly string GAME_SCREEN = "Game Scene";
+        public static readonly int GAME_SCREEN_NUM = 10;
 
         #endregion
 

@@ -27,6 +27,7 @@ namespace Global
 
         public static GameObject[] getInitialPlayers()
         {
+            GameObject[] temp = GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER);
             return GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER);
         }
 
