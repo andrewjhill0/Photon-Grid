@@ -11,8 +11,8 @@ namespace Global
 {
     class GameSettings : NetworkBehaviour
     {
-        private float numAI = 0;
-        private float colorChoice = 0;
+        public float numAI = 0;
+        public float colorChoice = 0;
         
         // Use this for initialization
         void Start()

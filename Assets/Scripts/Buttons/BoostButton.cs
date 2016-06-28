@@ -6,34 +6,39 @@ using Controllers;
 using Behaviors;
 using Global;
 
-public class BoostButton: Button {
 
-
-    // Use this for initialization
-    protected override void Start()
+namespace Buttons
+{
+    public class BoostButton : Button
     {
 
-    }
 
-    // Update is called once per frame
-    public void Update()
-    {
-        //A public function in the selectable class which button inherits from.
-        if (IsPressed())
+        // Use this for initialization
+        protected override void Start()
         {
-            WhilePressed();        	
+
         }
-    }
 
-    public void WhilePressed()
-    {
-        boost();
-    }
+        // Update is called once per frame
+        public void Update()
+        {
+            //A public function in the selectable class which button inherits from.
+            if (IsPressed())
+            {
+                WhilePressed();
+            }
+        }
 
-    public void boost()
-    {
-        GameObject playerObject;
-        playerObject = GetGlobalObjects.getControllablePlayer();
-        StartCoroutine(PlayerBehaviors.activateSpeedBoost(playerObject));
+        public void WhilePressed()
+        {
+            boost();
+        }
+
+        public void boost()
+        {
+            GameObject playerObject;
+            playerObject = GetGlobalObjects.getControllablePlayer();
+            StartCoroutine(PlayerBehaviors.activateSpeedBoost(playerObject));
+        }
     }
 }

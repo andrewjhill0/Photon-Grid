@@ -23,6 +23,7 @@ namespace Global
         #region Scene Names
 
         public static readonly string LOADING_SCREEN = "Loading Screen Menu";
+        public static readonly string GAME_SCREEN = "Game Scene";
 
         #endregion
 
