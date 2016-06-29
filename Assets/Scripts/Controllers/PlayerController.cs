@@ -5,8 +5,7 @@ using Behaviors;
 using Global;
 using Controller;
 using UnityEngine.Networking;
-using UnityEditor;
-using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace Controllers {
 	public class PlayerController : NetworkBehaviour {
@@ -26,7 +25,7 @@ namespace Controllers {
 
         void Awake()
         {
-            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
+            if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
                 GameState.instance.updatePlayerList(gameObject);
 
@@ -34,7 +33,7 @@ namespace Controllers {
         }
 		// Use this for initialization
 		void Start () {
-            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
+            if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
                 Material mat = (Material)Resources.Load("Vehicles/" + GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
                 GetComponent<Renderer>().material = mat;
@@ -48,14 +47,14 @@ namespace Controllers {
 		
 		// Update is called once per frame
 		void Update () {
-            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
+            if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
                 StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
             }
 		}
 		
 		void FixedUpdate()	{
-            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
+            if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
                 if (isLocalPlayer)
                 {

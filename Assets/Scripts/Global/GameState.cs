@@ -9,6 +9,8 @@ namespace Global
 {
     public class GameState : NetworkBehaviour
     {
+        int maxHumanPlayers = 1;
+        int numAI = 0;
         //[SyncVar]
         public static GameState instance = null; 
         //GameObject[] players;
@@ -41,6 +43,8 @@ namespace Global
             //Application.targetFrameRate = 60;
 
             spawnPositions = GameObject.FindGameObjectsWithTag(GlobalTags.SPAWN_POSITION);
+            maxHumanPlayers = GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().maxHumanPlayers;
+            numAI = GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().numAI;
 
             // GameState is now initialized and ready to be used.
             // Let's switch scenes and enable the player controller.
@@ -85,7 +89,7 @@ namespace Global
                 InstantiateAIPlayers();
                 fixPlayerPositions();
 
-                int numPlayers = NetworkManager.singleton.numPlayers + GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().numAI;
+                int numPlayers = NetworkManager.singleton.numPlayers + numAI;
 
 
                 gameOver = checkIfAllPlayersDead();  // do we need this here?  is the update() one enough?
@@ -108,7 +112,7 @@ namespace Global
             {
                 players.Add(playerObject);
             }
-            if (players.Count == NetworkManager.singleton.numPlayers)
+            if (players.Count == (NetworkManager.singleton.numPlayers))
             {
                 getGameReady();
             }

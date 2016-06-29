@@ -12,6 +12,7 @@ namespace Global
         public static readonly string NUM_AI_SLIDER = "NumAI Slider";
         public static readonly string COLOR_SLIDER = "Color Slider";
         public static readonly string CAMERA = "MainCamera";
+        public static readonly string MAX_HUMANS_SLIDER = "Max Humans Slider";
 
         #endregion
 
