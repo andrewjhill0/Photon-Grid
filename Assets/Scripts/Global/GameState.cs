@@ -3,6 +3,7 @@ using System.Collections;
 using Controllers;
 using Behaviors;
 using UnityEngine.Networking;
+using System.Collections.Generic;
 
 namespace Global
 {
@@ -10,7 +11,8 @@ namespace Global
     {
         //[SyncVar]
         public static GameState instance = null; 
-        GameObject[] players;
+        //GameObject[] players;
+        List<GameObject> players;
         //[SyncVar]
         bool gameOver;
         //[SyncVar]
@@ -28,6 +30,8 @@ namespace Global
             else if (instance != this)  Destroy(gameObject);
 
             DontDestroyOnLoad(gameObject);
+
+            players = new List<GameObject>();
         }
 
         // Use this for initialization
@@ -38,24 +42,12 @@ namespace Global
 
             spawnPositions = GameObject.FindGameObjectsWithTag(GlobalTags.SPAWN_POSITION);
 
-            InstantiateAIPlayers(spawnPositions);
-
-            int numPlayers = GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER).Length;
-            players = GetGlobalObjects.getInitialPlayers();
-
-            // Game is now ready to play.
+            // GameState is now initialized and ready to be used.
             // Let's switch scenes and enable the player controller.
 
             NetworkManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
 
-            //there is an OnSceneWasLoaded for the scene change below.
-            
             //GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>().enabled = true;
-
-
-            
-         
-
             
         }
 
@@ -64,9 +56,7 @@ namespace Global
         // Update is called once per frame
         void Update()
         {
-
-            GameObject[] all = (GameObject[])Resources.FindObjectsOfTypeAll(gameObject.GetType());
-            //gameOver = checkIfAllPlayersDead();
+            gameOver = checkIfAllPlayersDead();
             if(gameOver)
             {
                 // end the game after so many seconds.
@@ -83,9 +73,45 @@ namespace Global
             return players[id];
         }
 
-        public GameObject[] getAllPlayers()
+        public List<GameObject> getAllPlayers()
         {
             return players;
+        }
+
+        public void getGameReady()
+        {
+            if (!gameReady)
+            {
+                InstantiateAIPlayers();
+                fixPlayerPositions();
+
+                int numPlayers = NetworkManager.singleton.numPlayers + GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().numAI;
+
+
+                gameOver = checkIfAllPlayersDead();  // do we need this here?  is the update() one enough?
+
+                assignPlayerNumbers();
+                setAIPlayers();
+
+                cooldowns = Cooldowns.Instance; // create an instance of the Cooldowns singleton class after players have been initialized.
+
+                enablePlayerControllers();
+                enableCameraController();
+                gameReady = true;
+            }
+
+        }
+
+        public void updatePlayerList(GameObject playerObject)
+        {
+            if (!players.Contains(playerObject))
+            {
+                players.Add(playerObject);
+            }
+            if (players.Count == NetworkManager.singleton.numPlayers)
+            {
+                getGameReady();
+            }
         }
 
         private bool checkIfAllPlayersDead()
@@ -110,21 +136,16 @@ namespace Global
 
         private void assignPlayerNumbers()
         {
-            for(int i = 0; i < players.Length; i++)
+            for(int i = 0; i < players.Count; i++)
             {
                 players[i].tag = "Player " + i;
                 players[i].GetComponent<Controllers.PlayerController>().PlayerNum = i;
             }
         }
 
-        private void assignControllablePlayer()
-        {
-            players[0].GetComponent<Controllers.PlayerController>().IsControlledPlayer = true;
-        }
-
         private void setAIPlayers()
         {
-            for (int i = 1; i < players.Length; i++ )
+            for (int i = 1; i < players.Count; i++ )
             {
                 if (!players[i].GetComponent<Controllers.PlayerController>().isLocalPlayer)
                 {
@@ -142,25 +163,12 @@ namespace Global
             }
         }
 
-        private void InstantiateAIPlayers(GameObject[] spawnPositions)
+        private void InstantiateAIPlayers()
         {
             int numAI = (int)GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().numAI;
-            //GameObject[] spawnPositions = GameObject.FindGameObjectsWithTag(GlobalTags.SPAWN_POSITION);
-            Vector3 humanPlayerPosition = GameObject.FindGameObjectWithTag(GlobalTags.PLAYER).GetComponent<Transform>().position;
-
             for (int i = 1; i <= numAI; i++)
             {
-                if (spawnPositions[i].GetComponent<Transform>().position == humanPlayerPosition)
-                {
-                    numAI++; // let's skip this spawn Position
-                }
-                else
-                {
                     GameObject ai = (GameObject)Instantiate(aiPrefab);
-                    ai.GetComponent<Transform>().position = spawnPositions[i].GetComponent<Transform>().position;
-                    ai.GetComponent<Transform>().rotation = spawnPositions[i].GetComponent<Transform>().rotation;
-                }
-
             }
         }
 
@@ -172,46 +180,20 @@ namespace Global
             }
         }
 
-        public override void OnStartServer()
+        private void enableCameraController()
         {
-                //NetworkManager.singleton.OnServerSceneChanged()
-                //NetworkClient.Instance.Ready();
-                //NetworkManager.singleton.SpawnObjects();
-                //NetworkServer.SpawnObjects();
-
-                GameObject[] go = (GameObject[])GameObject.FindObjectsOfType(gameObject.GetType());
-
-                GameObject[] all = (GameObject[])GameObject.FindObjectsOfTypeAll(gameObject.GetType());
-
-
-                //updatePlayerList();
-                players = GetGlobalObjects.getInitialPlayers();
-
-                /*fixPlayerPosition(spawnPositions[0]);
-
-                gameOver = checkIfAllPlayersDead();  // do we need this here?  is the update() one enough?
-
-                assignPlayerNumbers();
-                setAIPlayers();
-
-                cooldowns = Cooldowns.Instance; // create an instance of the Cooldowns singleton class after players have been initialized.
-
-                enablePlayerControllers();
-                gameReady = true;*/
-            
+            GameObject.FindGameObjectWithTag(GlobalTags.CAMERA).GetComponent<CameraController>().enabled = true;
         }
 
-        private void updatePlayerList()
+        
+        private void fixPlayerPositions()
         {
-            for (int i = 0; i < players.Length; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                players[i] = GameObject.FindGameObjectWithTag(GlobalTags.PLAYERS[i]);
+                players[i].GetComponent<Transform>().position = spawnPositions[i].GetComponent<Transform>().position;
+                players[i].GetComponent<Transform>().rotation = spawnPositions[i].GetComponent<Transform>().rotation;
             }
         }
-        private void fixPlayerPosition(GameObject spawnPosition)
-        {
-            GetGlobalObjects.getControllablePlayer().GetComponent<Transform>().position = spawnPosition.GetComponent<Transform>().position;
-            GetGlobalObjects.getControllablePlayer().GetComponent<Transform>().rotation = spawnPosition.GetComponent<Transform>().rotation;
-        }
+
     }
 }

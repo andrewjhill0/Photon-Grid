@@ -9,8 +9,11 @@ public class NetworkManagerPlus : NetworkManager {
 
     public override void OnServerSceneChanged(string sceneName)
     {
-        /*if (sceneName == GlobalTags.GAME_SCREEN)
+        if (sceneName == GlobalTags.GAME_SCREEN)
         {
+
+            /*GameState.instance.getGameReady();
+
             //NetworkManager.singleton.OnServerSceneChanged()
             //NetworkClient.Instance.Ready();
             //NetworkManager.singleton.SpawnObjects();
@@ -20,7 +23,7 @@ public class NetworkManagerPlus : NetworkManager {
 
             GameObject[] all = (GameObject[])GameObject.FindObjectsOfTypeAll(gameObject.GetType());
 
-            Debug.Log(" ");
-        }*/
+            Debug.Log(" ");*/
+        }
     }
 }

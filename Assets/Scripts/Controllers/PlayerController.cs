@@ -19,42 +19,55 @@ namespace Controllers {
         [SyncVar]
 		public bool isAlive = false;
 	    public float turningSpeed;
-		private static InputController inputController;  // do we need this?
 		private Rigidbody vehicle;
         public GameObject walls;
 
 
+
+        void Awake()
+        {
+            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
+            {
+                GameState.instance.updatePlayerList(gameObject);
+
+            }
+        }
 		// Use this for initialization
 		void Start () {
             if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
+                Material mat = (Material)Resources.Load("Vehicles/" + GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
+                GetComponent<Renderer>().material = mat;
+
                 speed = PlayerConstants.BASE_VEHICLE_SPEED;
                 vehicle = GetComponent<Rigidbody>();
                 vehicle.velocity = vehicle.transform.forward * speed;
-
-                inputController = new InputController(this);
             }
 	        
 		}
 		
 		// Update is called once per frame
 		void Update () {
-            StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
-            
+            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
+            {
+                StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
+            }
 		}
 		
 		void FixedUpdate()	{
-
-            if (isLocalPlayer)
+            if (EditorSceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
-                int input = inputController.update();
+                if (isLocalPlayer)
+                {
+                    int input = InputController.Instance.update();
 
-                if (input == InputConstants.INPUT_BOOST)
-                    StartCoroutine(PlayerBehaviors.activateSpeedBoost(gameObject));
-                else if (input == InputConstants.INPUT_LEFT)
-                    PlayerBehaviors.turnPlayer(gameObject, InputConstants.INPUT_LEFT);
-                else if (input == InputConstants.INPUT_RIGHT)
-                    PlayerBehaviors.turnPlayer(gameObject, InputConstants.INPUT_RIGHT);
+                    if (input == InputConstants.INPUT_BOOST)
+                        StartCoroutine(PlayerBehaviors.activateSpeedBoost(gameObject));
+                    else if (input == InputConstants.INPUT_LEFT)
+                        PlayerBehaviors.turnPlayer(gameObject, InputConstants.INPUT_LEFT);
+                    else if (input == InputConstants.INPUT_RIGHT)
+                        PlayerBehaviors.turnPlayer(gameObject, InputConstants.INPUT_RIGHT);
+                }
             }
 
 		}

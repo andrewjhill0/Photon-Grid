@@ -3,14 +3,16 @@ using Constants;
 using System.Collections;
 
 namespace Controllers {
-	public class InputController { //do we need this?
+	public class InputController : MonoBehaviour { 
 
-		private PlayerController player;
+        public static InputController Instance;
 
-		public InputController (PlayerController player)
-		{
-			this.player = player;
-		}
+        void Start()
+        {
+            if (Instance == null) Instance = this;
+            else if (Instance != this) return; Destroy(gameObject);
+
+        }
 
 		public int update() {
 			if (Input.GetKeyDown("space"))

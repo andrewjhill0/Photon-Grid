@@ -29,7 +29,7 @@ namespace Global
 
         private Cooldowns()
         {
-            int numOfPlayers = GetGlobalObjects.getPlayerArray().Length;
+            int numOfPlayers = GetGlobalObjects.getPlayerList().Count;
 
             isBoostReady = new bool[numOfPlayers];
             isWallReady = new bool[numOfPlayers];

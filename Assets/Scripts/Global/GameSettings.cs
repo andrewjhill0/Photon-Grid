@@ -11,8 +11,8 @@ namespace Global
 {
     class GameSettings : NetworkBehaviour
     {
-        public float numAI = 0;
-        public float colorChoice = 0;
+        public int numAI = 0;
+        public int colorChoice = 0;
         
         // Use this for initialization
         void Start()
@@ -32,8 +32,8 @@ namespace Global
 
         public void setSettings()
         {
-            numAI = GameObject.FindGameObjectWithTag(GlobalTags.NUM_AI_SLIDER).GetComponent<Slider>().value;
-            colorChoice = GameObject.FindGameObjectWithTag(GlobalTags.COLOR_SLIDER).GetComponent<Slider>().value;
+            numAI = (int) GameObject.FindGameObjectWithTag(GlobalTags.NUM_AI_SLIDER).GetComponent<Slider>().value;
+            colorChoice = (int) GameObject.FindGameObjectWithTag(GlobalTags.COLOR_SLIDER).GetComponent<Slider>().value;
         }
     }
 }

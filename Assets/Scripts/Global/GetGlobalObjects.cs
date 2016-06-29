@@ -31,7 +31,7 @@ namespace Global
             return GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER);
         }
 
-        public static GameObject[] getPlayerArray()
+        public static List<GameObject> getPlayerList()
         {
             return getGameState().getAllPlayers();
         }
@@ -55,7 +55,7 @@ namespace Global
 
         public static int getNumberOfPlayers()
         {
-            return getGameState().getAllPlayers().Length;
+            return getGameState().getAllPlayers().Count;
         }
 
         public static AIManager getAIManager()
