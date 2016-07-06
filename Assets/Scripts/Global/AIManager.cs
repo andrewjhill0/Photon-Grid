@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Behaviors;
-using Constants;       //Allows us to use Lists. 
+using Constants;
+using UnityEngine.SceneManagement;       //Allows us to use Lists. 
 
 namespace Global
 {
@@ -26,33 +27,38 @@ namespace Global
             else if (instance != this)  Destroy(gameObject);
 
             DontDestroyOnLoad(gameObject);
+            Debug.Log("AIManager Awake.");
         }
 
 
         //Update is called every frame.
         void Update()
         {
-            if (GameState.instance.gameReady)
+            if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
-                foreach (GameObject player in AiPlayerObjects)
+                //Debug.Log("AIManager Update");
+                if (GameState.Instance.gameReady)
                 {
-                    System.Random rnd = new System.Random();
-                    double turnDirection = rnd.NextDouble();
+                    foreach (GameObject player in AiPlayerObjects)
+                    {
+                        System.Random rnd = new System.Random();
+                        double turnDirection = rnd.NextDouble();
 
-                    if (turnDirection <= 0.5) // turn left
-                    {
-                        PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_LEFT);
-                        if (turnDirection < AIConstants.BOOST_FREQ)
+                        if (turnDirection <= 0.5) // turn left
                         {
-                            boostAIPlayer(player);
+                            PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_LEFT);
+                            if (turnDirection < AIConstants.BOOST_FREQ)
+                            {
+                                boostAIPlayer(player);
+                            }
                         }
-                    }
-                    else // turn right
-                    {
-                        PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_RIGHT);
-                        if (turnDirection > 1 - AIConstants.BOOST_FREQ)
+                        else // turn right
                         {
-                            boostAIPlayer(player);
+                            PlayerBehaviors.turnPlayer(player, InputConstants.INPUT_RIGHT);
+                            if (turnDirection > 1 - AIConstants.BOOST_FREQ)
+                            {
+                                boostAIPlayer(player);
+                            }
                         }
                     }
                 }

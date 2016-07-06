@@ -9,50 +9,93 @@ namespace Global
 {
     public class GameState : NetworkBehaviour
     {
-        int maxHumanPlayers = 1;
-        int numAI = 0;
+        public int maxHumanPlayers = 1;
+        public int numAI = 0;
         //[SyncVar]
-        public static GameState instance = null; 
+        protected static GameState instance; 
         //GameObject[] players;
-        List<GameObject> players;
-        //[SyncVar]
-        bool gameOver;
-        //[SyncVar]
+        //SyncListStruct<List<GameObject>> players;
+        public List<GameObject> players = new List<GameObject>();
+        [SyncVar]
+        public bool gameOver;
+        [SyncVar]
         public Cooldowns cooldowns;
 
         public GameObject aiPrefab;
+        [SyncVar]
         public bool gameReady = false;
+        [SyncVar]
+        public bool playersInserted = false;
 
-        GameObject[] spawnPositions;
+        public GameObject[] spawnPositions;
 
+
+        public static GameState Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    return null;
+                }
+                return instance;
+            }
+        }
 
         void Awake()
         {
-            if (instance == null)       instance = this;
-            else if (instance != this)  Destroy(gameObject);
+            Debug.Log("GameState Awake called");
+            if (instance == null)
+            {
+                Debug.Log("Create new GameState instance.");
+                instance = this;
+            }
+            else if (instance != this)
+            {
+                Destroy(gameObject);
+            }
 
             DontDestroyOnLoad(gameObject);
 
-            players = new List<GameObject>();
+
         }
 
         // Use this for initialization
         void Start()
         {
+            if(isServer)
+            {
+                StartCoroutine(gameStateStart());
+            }
+        }
+
+        private IEnumerator gameStateStart()
+        {
+            while (!playersInserted)
+            {
+                yield return new WaitForSeconds(1);
+                if (players.Count == NetworkLobbyManager.singleton.numPlayers) playersInserted = true;
+            }
+            Debug.Log("GameState Started");
             //QualitySettings.vSyncCount = 0;
             //Application.targetFrameRate = 60;
+            if (isServer)
+            {
+                Debug.Log("GameState Started Server statement.");
+                Debug.Log(spawnPositions.Length);
+                spawnPositions = GameObject.FindGameObjectsWithTag(GlobalTags.SPAWN_POSITION);
+                Debug.Log(spawnPositions.Length);
+                maxHumanPlayers = GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().maxHumanPlayers;
+                numAI = GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().numAI;
+                int numPlayers = NetworkManager.singleton.numPlayers + numAI;
 
-            spawnPositions = GameObject.FindGameObjectsWithTag(GlobalTags.SPAWN_POSITION);
-            maxHumanPlayers = GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().maxHumanPlayers;
-            numAI = GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().numAI;
+                Debug.Log("Player Array is size: " + players.Count);
 
-            // GameState is now initialized and ready to be used.
-            // Let's switch scenes and enable the player controller.
 
-            NetworkManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
+                NetworkServer.SpawnObjects();
 
-            //GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>().enabled = true;
-            
+                NetworkLobbyManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
+            }
         }
 
 
@@ -60,6 +103,12 @@ namespace Global
         // Update is called once per frame
         void Update()
         {
+            if(spawnPositions.Length == 0)
+            {
+                spawnPositions = GameObject.FindGameObjectsWithTag(GlobalTags.SPAWN_POSITION);
+            }
+
+
             gameOver = checkIfAllPlayersDead();
             if(gameOver)
             {
@@ -82,29 +131,43 @@ namespace Global
             return players;
         }
 
+        [Server]
         public void getGameReady()
         {
             if (!gameReady)
             {
-                InstantiateAIPlayers();
-                fixPlayerPositions();
+                if (isServer)
+                {
+                    Debug.Log(spawnPositions.Length);
 
-                int numPlayers = NetworkManager.singleton.numPlayers + numAI;
+                    NetworkServer.SpawnObjects();
+                    InstantiateAIPlayers();
+                    //fixPlayerPositions();
+
+                    
 
 
-                gameOver = checkIfAllPlayersDead();  // do we need this here?  is the update() one enough?
+                    //gameOver = checkIfAllPlayersDead();  // do we need this here?  is the update() one enough?
 
-                assignPlayerNumbers();
-                setAIPlayers();
+                    //assignPlayerNumbers();
+                    setAIPlayers();
 
-                cooldowns = Cooldowns.Instance; // create an instance of the Cooldowns singleton class after players have been initialized.
+                    cooldowns = Cooldowns.Instance; // create an instance of the Cooldowns singleton class after players have been initialized.
 
-                enablePlayerControllers();
-                enableCameraController();
-                gameReady = true;
+                    /*foreach(GameObject player in players)
+                    {
+                        player.SetActive(true);
+                    }*/
+
+
+                    enableAIPlayerControllers();
+
+                    gameReady = true; // setting this true will let the Player Initialization script know that it's time to enable the Player Controllers.
+                }
             }
 
         }
+
 
         public void updatePlayerList(GameObject playerObject)
         {
@@ -112,10 +175,10 @@ namespace Global
             {
                 players.Add(playerObject);
             }
-            if (players.Count == (NetworkManager.singleton.numPlayers))
+            /*if (players.Count == (NetworkManager.singleton.matchSize))
             {
                 getGameReady();
-            }
+            }*/
         }
 
         private bool checkIfAllPlayersDead()
@@ -149,14 +212,6 @@ namespace Global
 
         private void setAIPlayers()
         {
-            for (int i = 1; i < players.Count; i++ )
-            {
-                if (!players[i].GetComponent<Controllers.PlayerController>().isLocalPlayer)
-                {
-                    players[i].GetComponent<Controllers.PlayerController>().IsAI = true;
-                }
-            }
-
             foreach (GameObject player in players) // now we need to setup the AIManager class
             {
                 if (player.GetComponent<Controllers.PlayerController>().IsAI)
@@ -169,25 +224,26 @@ namespace Global
 
         private void InstantiateAIPlayers()
         {
-            int numAI = (int)GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().numAI;
-            for (int i = 1; i <= numAI; i++)
+            int numAI = (int)GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().numAI;
+            for (int i = 0; i < numAI; i++)
             {
-                    GameObject ai = (GameObject)Instantiate(aiPrefab);
+                GameObject ai = (GameObject)Instantiate(aiPrefab);
+                ai.GetComponent<Controllers.PlayerController>().IsAI = true;
+                NetworkServer.Spawn(ai);
             }
         }
 
-        private void enablePlayerControllers()
+        private void enableAIPlayerControllers() 
         {
-            foreach (GameObject player in players) // now we need to setup the AIManager class
+            foreach (GameObject player in players) 
             {
-                player.GetComponent<Controllers.PlayerController>().enabled = true;   
+                if (player.GetComponent<Controllers.PlayerController>().IsAI)
+                {
+                    player.GetComponent<Controllers.PlayerController>().enabled = true;
+                }
             }
         }
 
-        private void enableCameraController()
-        {
-            GameObject.FindGameObjectWithTag(GlobalTags.CAMERA).GetComponent<CameraController>().enabled = true;
-        }
 
         
         private void fixPlayerPositions()

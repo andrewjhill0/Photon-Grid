@@ -20,6 +20,8 @@ namespace Global
 
         public static readonly string NETWORK_MANAGER = "Network Manager";
         public static readonly string SPAWN_POSITION = "Spawn Position";
+        public static readonly string LOBBY_MANAGER = "Lobby Manager";
+        
 
         #endregion
 
@@ -28,6 +30,13 @@ namespace Global
         public static readonly string LOADING_SCREEN = "Loading Screen Menu";
         public static readonly string GAME_SCREEN = "Game Scene";
         public static readonly int GAME_SCREEN_NUM = 10;
+        public static readonly int LOBBY_SCREEN_NUM = 11;
+
+        #endregion
+
+        #region Game Settings
+
+        public static readonly string GAME_SETTINGS_OBJECT = "Game Settings";
 
         #endregion
 

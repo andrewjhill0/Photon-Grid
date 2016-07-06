@@ -11,7 +11,7 @@ namespace Controllers {
 	public class PlayerController : NetworkBehaviour {
 
         private bool isControlledPlayer; // Truncated.  We don't need this anymore due to the network framework.  IsLocalPlayer is sufficient.
-        private bool isAI;
+        public bool isAI;
         private int playerNum;
         [SyncVar]
         private float speed;
@@ -22,37 +22,106 @@ namespace Controllers {
         public GameObject walls;
 
 
-
         void Awake()
         {
-            if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
-            {
-                GameState.instance.updatePlayerList(gameObject);
-
-            }
+            Debug.Log("PC Awake");
+            StartCoroutine(pcAwake());
+            
         }
-		// Use this for initialization
-		void Start () {
+
+        private IEnumerator pcAwake()
+        {
+            //gameObject.SetActive(false);
+            while(GameState.Instance == null)
+            {
+                Debug.Log("PC waiting for GameState to Awake()");
+                yield return new WaitForSeconds(1);
+            }
+            Debug.Log("PC Waiting done.");
+            GameState.Instance.updatePlayerList(gameObject);
+            DontDestroyOnLoad(gameObject);
+        }
+
+        void Start()
+        {
+            Debug.Log("PC Started");
             if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
-                Material mat = (Material)Resources.Load("Vehicles/" + GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
-                GetComponent<Renderer>().material = mat;
 
-                speed = PlayerConstants.BASE_VEHICLE_SPEED;
-                vehicle = GetComponent<Rigidbody>();
-                vehicle.velocity = vehicle.transform.forward * speed;
+                if (isLocalPlayer)
+                {
+                    Debug.Log("PC Local Player Start.");
+                    
+                    enableCameraController();speed = PlayerConstants.BASE_VEHICLE_SPEED;
+                    vehicle = GetComponent<Rigidbody>();
+                    Debug.Log("IsLocalPlayer: " + isLocalPlayer + " #" + PlayerNum + " 's speed is: " + vehicle.velocity);
+                    vehicle.velocity = vehicle.transform.forward * speed;
+                    Debug.Log("IsLocalPlayer: " + isLocalPlayer + " #" + PlayerNum + " 's speed is: " + vehicle.velocity);
+                    //CmdStartVehicle();
+                }
+
+                if(isServer)
+                {
+                    if(isAI)
+                    {
+                        speed = PlayerConstants.BASE_VEHICLE_SPEED;
+                        vehicle = GetComponent<Rigidbody>();
+                        vehicle.velocity = vehicle.transform.forward * speed;
+                    }
+                }
+
             }
 	        
 		}
+        [Command]
+        void CmdStartVehicle()
+        {
+        }  
+        
 		
 		// Update is called once per frame
-		void Update () {
+        void Update()
+        {
+            
             if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
-                StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
+                if(isLocalPlayer)
+                {
+                    CmdEjectWall(gameObject, walls);
+                }
+
+                if (isServer)
+                {
+                    if (isAI)
+                    {
+                        StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
+                    }
+                }
             }
+
+            
 		}
-		
+
+        [Command]
+        void CmdEjectWall(GameObject gameObject, GameObject walls)
+        {
+                StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
+        }
+
+        private void enableCameraController()
+        {
+            Debug.Log("Does GameState Exist? ");
+            if (GameObject.FindGameObjectWithTag(GlobalTags.CAMERA) != null)
+            {
+                Debug.Log("Yes");
+            }
+            else
+            {
+                Debug.Log("No");
+            }
+            GameObject.FindGameObjectWithTag(GlobalTags.CAMERA).GetComponent<CameraController>().enabled = true;
+        }
+
 		void FixedUpdate()	{
             if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
@@ -104,6 +173,8 @@ namespace Controllers {
                 this.isAI = value;
             }
         }
+
+        
 	    void OnCollisionEnter(Collision other)
 	    {
 	        if (other.collider.tag == GlobalTags.WALL)
@@ -133,6 +204,7 @@ namespace Controllers {
             }
 
 	    }
+         
 
     }
 }

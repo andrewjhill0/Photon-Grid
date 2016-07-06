@@ -43,7 +43,7 @@ namespace Controllers {
 				goToBirdsEyeView();
 				Debug.Log("BIRD EYE VIEW");
                 yield return new WaitForSeconds(10);
-                Application.Quit();
+                //Application.Quit();
 			}
 		}
 

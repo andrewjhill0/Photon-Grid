@@ -4,6 +4,7 @@ using Constants;
 using Global;
 using Controllers;
 using Controller;
+using UnityEngine.Networking;
 
 namespace Behaviors 
 {
@@ -24,7 +25,7 @@ namespace Behaviors
         public static IEnumerator activateSpeedBoost(GameObject player)
         {
             Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
-            int playerNum = player.GetComponent<PlayerController>().PlayerNum;
+            int playerNum = player.GetComponent<Controllers.PlayerController>().PlayerNum;
 
             Rigidbody vehicle = player.GetComponent<Rigidbody>();
 
@@ -47,7 +48,7 @@ namespace Behaviors
         public static IEnumerator ejectWall(GameObject player, GameObject wallPrefab)
         {
             Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
-            int playerNum = player.GetComponent<PlayerController>().PlayerNum;
+            int playerNum = player.GetComponent<Controllers.PlayerController>().PlayerNum;
 
             if (cooldowns.IsWallReady[playerNum])
             {
@@ -61,6 +62,8 @@ namespace Behaviors
                 spawnedWall = (GameObject)MonoBehaviour.Instantiate(wallPrefab, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
                 setWallToPlayer(player, spawnedWall);
 
+                NetworkServer.Spawn(spawnedWall);
+
                 yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RESPAWN_TIME / Mathf.Sqrt(vehicle.velocity.sqrMagnitude));
                 cooldowns.IsWallReady[playerNum] = true;
             }
@@ -69,7 +72,7 @@ namespace Behaviors
 
         private static void setWallToPlayer(GameObject player, GameObject wall)
         {
-            int playerNum = player.GetComponent<PlayerController>().PlayerNum;
+            int playerNum = player.GetComponent<Controllers.PlayerController>().PlayerNum;
             wall.GetComponent<WallController>().PlayerID = playerNum;
             Material mat = (Material)Resources.Load("Walls/" + GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
 

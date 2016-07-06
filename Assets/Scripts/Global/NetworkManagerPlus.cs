@@ -5,7 +5,7 @@ using Global;
 
 public class NetworkManagerPlus : NetworkManager {
 
-	
+	public GameObject gameStatePrefab;
 
     public override void OnServerSceneChanged(string sceneName)
     {
@@ -25,5 +25,13 @@ public class NetworkManagerPlus : NetworkManager {
 
             Debug.Log(" ");*/
         }
+    }
+
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        base.OnServerConnect(conn);
+        bool ready = conn.isReady;
+        NetworkServer.Spawn(gameStatePrefab);
+
     }
 }
