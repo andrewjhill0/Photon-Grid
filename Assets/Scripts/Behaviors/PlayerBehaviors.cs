@@ -10,8 +10,12 @@ namespace Behaviors
 {
     public static class PlayerBehaviors 
     {
-        
-
+        /// <summary>
+        /// This static method allows the player gameobject to change it's velocity and rotation, thus "turning" the player gameobject.
+        /// </summary>
+        /// <param name="player">  The locally controlled player gameobject.  Should be the vehicle the player is controlling.</param>
+        /// <param name="input">  Which direction is it turning?  See the Inputconstants class for definitions.</param>
+        /// <returns> void </returns>
         public static void turnPlayer(GameObject player, int input) // 
         {
             Rigidbody vehicle = player.GetComponent<Rigidbody>();
@@ -22,6 +26,12 @@ namespace Behaviors
             vehicle.rotation = Quaternion.LookRotation(vehicle.velocity);
         }
 
+        /// <summary>
+        /// This static Coroutine method will put the player gameobject into boost mode (higher velocity) for the BOOST_DURATION time.  
+        /// Will access the singleton Cooldowns instance running in the game scene.
+        /// </summary>
+        /// <param name="player">  The player gameobject to be boosted.</param>
+        /// <returns> IEnumerator </returns>
         public static IEnumerator activateSpeedBoost(GameObject player)
         {
             Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
@@ -45,39 +55,47 @@ namespace Behaviors
             }
         }
 
+        /// <summary>
+        /// This static Coroutine method that will instantiate a Wall prefab at a set distance and rotation behind a given player gameobject.
+        /// This will access the Cooldowns singleton instance.
+        /// </summary>
+        /// <param name="player">  The player gameobject to put the wall behind.</param>
+        /// <param name="wallPrefab">  The wall prefab that will be instantiated.  Depricated.  Needs to be removed.</param>
+        /// <returns> IEnumerator  </returns>
         public static IEnumerator ejectWall(GameObject player, GameObject wallPrefab)
         {
+            Debug.Log("Phase 1: EjectWall called by: " + player.GetComponent<Controllers.PlayerController>().PlayerNum);
+            
             Cooldowns cooldowns = GetGlobalObjects.getCooldownsInstance();
             int playerNum = player.GetComponent<Controllers.PlayerController>().PlayerNum;
 
+            Debug.Log("Phase 2: EjectWall called by: " + player.GetComponent<Controllers.PlayerController>().PlayerNum + 
+                "  ready value: " + cooldowns.IsWallReady[playerNum]);
             if (cooldowns.IsWallReady[playerNum])
             {
+                Debug.Log("Phase 3: EjectWall called by: " + player.GetComponent<Controllers.PlayerController>().PlayerNum);
                 cooldowns.IsWallReady[playerNum] = false;
+
                 Rigidbody vehicle = player.GetComponent<Rigidbody>();
-                float alignToFloor = PlayerConstants.WALL_HEIGHT;
+
                 Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * PlayerConstants.WALL_SPAWN_DISTANCE;
-                behindVehicle.y = alignToFloor;
+                behindVehicle.y = PlayerConstants.WALL_HEIGHT;
+                Debug.Log("Phase 4: EjectWall called by: " + player.GetComponent<Controllers.PlayerController>().PlayerNum);
 
                 GameObject spawnedWall;
-                spawnedWall = (GameObject)MonoBehaviour.Instantiate(wallPrefab, behindVehicle, Quaternion.LookRotation(vehicle.velocity));
-                setWallToPlayer(player, spawnedWall);
-
+                spawnedWall = (GameObject)MonoBehaviour.Instantiate(Resources.Load(GlobalTags.WALL_PREFAB), behindVehicle, Quaternion.LookRotation(vehicle.velocity));
+                
+                Debug.Log("Phase 5: EjectWall called by: " + player.GetComponent<Controllers.PlayerController>().PlayerNum);
                 NetworkServer.Spawn(spawnedWall);
-
-                yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RESPAWN_TIME / Mathf.Sqrt(vehicle.velocity.sqrMagnitude));
+                GameState.Instance.RpcSetWallToPlayer(player, spawnedWall);
+                Debug.Log("Phase 6: EjectWall called by: " + player.GetComponent<Controllers.PlayerController>().PlayerNum + "  " + PlayerConstants.WALL_SPAWN_RESPAWN_TIME);
+                yield return new WaitForSeconds(PlayerConstants.WALL_SPAWN_RESPAWN_TIME);
                 cooldowns.IsWallReady[playerNum] = true;
+                Debug.Log("Phase 7*****: EjectWall called by: " + player.GetComponent<Controllers.PlayerController>().PlayerNum);
             }
         }
 
-
-        private static void setWallToPlayer(GameObject player, GameObject wall)
-        {
-            int playerNum = player.GetComponent<Controllers.PlayerController>().PlayerNum;
-            wall.GetComponent<WallController>().PlayerID = playerNum;
-            Material mat = (Material)Resources.Load("Walls/" + GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
-
-            wall.GetComponent<Renderer>().material = mat;
-        }
+        
 
 
 

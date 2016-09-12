@@ -26,12 +26,12 @@ namespace Buttons
 
         public void startSinglePlayerHosting()
         {
-            GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().setSettings();
+            GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().setSettings();
             NetworkManager.singleton.StartHost();
-            NetworkManager.singleton.matchSize = (uint) GameObject.FindGameObjectWithTag(GlobalTags.NETWORK_MANAGER).GetComponent<GameSettings>().maxHumanPlayers;
+            NetworkManager.singleton.matchSize = (uint) GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().maxHumanPlayers;
             Instantiate(gameStatePrefab);
             NetworkServer.Spawn(gameStatePrefab);
-            //NetworkManager.singleton.ServerChangeScene(GlobalTags.LOADING_SCREEN);
+            NetworkManager.singleton.ServerChangeScene(GlobalTags.LOADING_SCREEN);
         }
 
         public void startSinglePlayerGame()

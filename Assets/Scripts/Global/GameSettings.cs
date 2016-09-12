@@ -14,6 +14,7 @@ namespace Global
         public int numAI = 0;
         public int colorChoice = 0;
         public int maxHumanPlayers = 1;
+        public bool isMultiplayerGame = false;
         
         void Awake()
         {
@@ -39,7 +40,8 @@ namespace Global
         { 
             if (GameObject.FindGameObjectWithTag(GlobalTags.MAX_HUMANS_SLIDER) != null) // we are in the Multiplayer host menu
             { 
-                maxHumanPlayers = (int)GameObject.FindGameObjectWithTag(GlobalTags.MAX_HUMANS_SLIDER).GetComponent<Slider>().value; 
+                maxHumanPlayers = (int)GameObject.FindGameObjectWithTag(GlobalTags.MAX_HUMANS_SLIDER).GetComponent<Slider>().value;
+                isMultiplayerGame = true;
             }
             numAI = (int) GameObject.FindGameObjectWithTag(GlobalTags.NUM_AI_SLIDER).GetComponent<Slider>().value;
             colorChoice = (int) GameObject.FindGameObjectWithTag(GlobalTags.COLOR_SLIDER).GetComponent<Slider>().value;

@@ -4,6 +4,8 @@ using Controllers;
 using Behaviors;
 using UnityEngine.Networking;
 using System.Collections.Generic;
+using Controller;
+using Constants;
 
 namespace Global
 {
@@ -28,6 +30,8 @@ namespace Global
         public bool playersInserted = false;
 
         public GameObject[] spawnPositions;
+
+        public GameObject walls;
 
 
         public static GameState Instance
@@ -71,10 +75,17 @@ namespace Global
 
         private IEnumerator gameStateStart()
         {
-            while (!playersInserted)
+            bool isMultiplayerGame = false;
+
+            if(GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().isMultiplayerGame)
             {
-                yield return new WaitForSeconds(1);
-                if (players.Count == NetworkLobbyManager.singleton.numPlayers) playersInserted = true;
+                isMultiplayerGame = true;
+
+                while (!playersInserted)
+                {
+                    yield return new WaitForSeconds(1);
+                    if (players.Count == NetworkLobbyManager.singleton.numPlayers) playersInserted = true;
+                }
             }
             Debug.Log("GameState Started");
             //QualitySettings.vSyncCount = 0;
@@ -94,7 +105,14 @@ namespace Global
 
                 NetworkServer.SpawnObjects();
 
-                NetworkLobbyManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
+                if(isMultiplayerGame)
+                {
+                    NetworkLobbyManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
+                }
+                else
+                {
+                    NetworkManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
+                }
             }
         }
 
@@ -103,6 +121,7 @@ namespace Global
         // Update is called once per frame
         void Update()
         {
+            // Do we need this if statement?  It looks like it's handled in the gameStateStart coroutine
             if(spawnPositions.Length == 0)
             {
                 spawnPositions = GameObject.FindGameObjectsWithTag(GlobalTags.SPAWN_POSITION);
@@ -114,6 +133,45 @@ namespace Global
             {
                 // end the game after so many seconds.
             }
+
+            if (isServer && gameReady)
+            {
+                //let's spawn walls for all players
+                for (int i = 0; i < players.Count; i++)
+                {
+                    if (players[i].GetComponent<Rigidbody>().velocity.magnitude > 0 && players[i].GetComponent<Controllers.PlayerController>().isAlive)
+                    {  // TODO only a temporary check.  we need better sync method for after vehicles are ready.
+                        StartCoroutine(PlayerBehaviors.ejectWall(players[i], walls));
+                    }
+                }
+            }
+        }
+
+        [ClientRpc]
+        public void RpcSetWallToPlayer(GameObject playerDataFromServer, GameObject wall)
+        {
+            GameObject player = new GameObject();
+
+            foreach (GameObject playerSearch in GameState.Instance.players)
+            {
+                if (playerSearch.GetInstanceID() == playerDataFromServer.GetInstanceID())
+                {
+                    player = playerSearch;
+                }
+            }
+
+            Debug.Log("RPC SET WALL CALLED");
+
+            Rigidbody vehicle = player.GetComponent<Rigidbody>();
+
+            Vector3 behindVehicle = vehicle.transform.position - vehicle.transform.forward * PlayerConstants.WALL_SPAWN_DISTANCE;
+            behindVehicle.y = PlayerConstants.WALL_HEIGHT;
+
+            int playerNum = player.GetComponent<Controllers.PlayerController>().PlayerNum;
+            wall.GetComponent<WallController>().PlayerID = playerNum;
+            Material mat = (Material)Resources.Load("Walls/" + GlobalTags.PLAYER_COLORS[playerNum], typeof(Material));
+
+            wall.GetComponent<Renderer>().material = mat;
         }
 
         public bool getGameOver() 
@@ -138,7 +196,7 @@ namespace Global
             {
                 if (isServer)
                 {
-                    Debug.Log(spawnPositions.Length);
+                    Debug.Log("spawnPosition length is: " + spawnPositions.Length);
 
                     NetworkServer.SpawnObjects();
                     InstantiateAIPlayers();
@@ -173,6 +231,7 @@ namespace Global
         {
             if (!players.Contains(playerObject))
             {
+                Debug.Log("updatePlayer List called.  Player added.", playerObject);
                 players.Add(playerObject);
             }
             /*if (players.Count == (NetworkManager.singleton.matchSize))
@@ -194,7 +253,7 @@ namespace Global
                     aliveCount++;
                 }
             }
-            if (aliveCount <= 1)
+            if (aliveCount < 1)
             {
                 allDead = true;
             }
@@ -212,12 +271,24 @@ namespace Global
 
         private void setAIPlayers()
         {
-            foreach (GameObject player in players) // now we need to setup the AIManager class
+            //foreach (GameObject player in players) // now we need to setup the AIManager class
+            for (int i = 0; i < players.Count; i++ )
             {
-                if (player.GetComponent<Controllers.PlayerController>().IsAI)
+                if (players[i].GetComponent<Controllers.PlayerController>().IsAI)
                 {
-                    AIManager.instance.AiPlayerObjects.Add(player);
-                    AIManager.instance.AiPlayers.Add(player.GetComponent<Controllers.PlayerController>().PlayerNum);
+                    players[i].GetComponent<Controllers.PlayerController>().PlayerNum = i;
+                    players[i].tag = GlobalTags.PLAYERS[i];
+
+                    Material mat = (Material)Resources.Load("Vehicles/" + GlobalTags.PLAYER_COLORS[i], typeof(Material));
+                    players[i].GetComponent<Renderer>().material = mat;
+
+                    players[i].GetComponent<Transform>().position = GameState.Instance.spawnPositions[i].GetComponent<Transform>().position;
+                    players[i].GetComponent<Transform>().rotation = GameState.Instance.spawnPositions[i].GetComponent<Transform>().rotation;
+
+                    players[i].GetComponent<BoxCollider>().enabled = true;
+
+                    AIManager.instance.AiPlayerObjects.Add(players[i]);
+                    AIManager.instance.AiPlayers.Add(players[i].GetComponent<Controllers.PlayerController>().PlayerNum);
                 }
             }
         }

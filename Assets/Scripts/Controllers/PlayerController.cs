@@ -20,6 +20,7 @@ namespace Controllers {
 	    public float turningSpeed;
 		private Rigidbody vehicle;
         public GameObject walls;
+        private bool checkWallTimer;
 
 
         void Awake()
@@ -44,6 +45,7 @@ namespace Controllers {
 
         void Start()
         {
+            checkWallTimer = true;
             Debug.Log("PC Started");
             if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
@@ -52,12 +54,13 @@ namespace Controllers {
                 {
                     Debug.Log("PC Local Player Start.");
                     
-                    enableCameraController();speed = PlayerConstants.BASE_VEHICLE_SPEED;
+                    enableCameraController();
+                    speed = PlayerConstants.BASE_VEHICLE_SPEED;
                     vehicle = GetComponent<Rigidbody>();
-                    Debug.Log("IsLocalPlayer: " + isLocalPlayer + " #" + PlayerNum + " 's speed is: " + vehicle.velocity);
+                    Debug.Log("Before Setting Velocity, IsLocalPlayer: " + isLocalPlayer + " #" + PlayerNum + " 's speed is: " + vehicle.velocity);
                     vehicle.velocity = vehicle.transform.forward * speed;
-                    Debug.Log("IsLocalPlayer: " + isLocalPlayer + " #" + PlayerNum + " 's speed is: " + vehicle.velocity);
-                    //CmdStartVehicle();
+                    Debug.Log("After Setting Velocity, IsLocalPlayer: " + isLocalPlayer + " #" + PlayerNum + " 's speed is: " + vehicle.velocity);
+                    //CmdStartVehicle(); // vehicles are locally controlled. we can't do a cmd
                 }
 
                 if(isServer)
@@ -73,22 +76,26 @@ namespace Controllers {
             }
 	        
 		}
-        [Command]
-        void CmdStartVehicle()
-        {
-        }  
         
 		
 		// Update is called once per frame
         void Update()
         {
-            
+            //Debug.Log("UPdating Player Controller for player " + playerNum);
             if (SceneManager.GetActiveScene().name == GlobalTags.GAME_SCREEN)
             {
-                if(isLocalPlayer)
+               /* if(isLocalPlayer)
                 {
-                    CmdEjectWall(gameObject, walls);
-                }
+                    if (checkWallTimer)
+                    {
+                        checkWallTimer = false;
+                        StartCoroutine(wallTimerReset());
+                        //Debug.Log("Is Wall ready for client player? " + Cooldowns.Instance.IsWallReady[playerNum]);
+                        Debug.Log("Phase -1: EjectWall called by: " + playerNum);
+                        CmdEjectWall(gameObject, walls); // walls are server-controlled and spawned, so we must use a Cmd
+                    }
+
+                }*/
 
                 if (isServer)
                 {
@@ -102,9 +109,16 @@ namespace Controllers {
             
 		}
 
+        private IEnumerator wallTimerReset()
+        {
+            yield return new WaitForSeconds(0.3f);
+            checkWallTimer = true;
+        }
+
         [Command]
         void CmdEjectWall(GameObject gameObject, GameObject walls)
         {
+                Debug.Log("Phase 0  : EjectWall called by: " + playerNum);
                 StartCoroutine(PlayerBehaviors.ejectWall(gameObject, walls));
         }
 
@@ -174,18 +188,20 @@ namespace Controllers {
             }
         }
 
+
         
 	    void OnCollisionEnter(Collision other)
 	    {
-	        if (other.collider.tag == GlobalTags.WALL)
+	        if (other.collider.tag == GlobalTags.WALL_TAG)
 	        {
-                Debug.Log(other.gameObject.GetComponent<WallController>().PlayerID + "'s wall Collision for Player" + GetComponent<PlayerController>().PlayerNum);
+                Debug.Log(other.gameObject.GetComponent<WallController>().PlayerID + "'s wall Collision for Player" + 
+                    GetComponent<PlayerController>().PlayerNum + "at: " + transform.position.ToString());
 	            gameObject.SetActive(false);
                 isAlive = false;
 	        }
             if (other.collider.tag == GlobalTags.BOUNDARY)
             {
-                Debug.Log("Boundary Collision for Player" + GetComponent<PlayerController>().PlayerNum);
+                Debug.Log("Boundary Collision for Player" + GetComponent<PlayerController>().PlayerNum + "at: " + transform.position.ToString());
                 gameObject.SetActive(false);
                 isAlive = false;
             }
@@ -196,7 +212,8 @@ namespace Controllers {
                 {
                     if(other.collider.tag == GlobalTags.PLAYERS[i])
                     {
-                        Debug.Log(other.collider.tag + " and Player" + GetComponent<PlayerController>().PlayerNum + " ran into each other. BOOM!");
+                        Debug.Log(other.collider.tag + " and Player" + GetComponent<PlayerController>().PlayerNum + " ran into each other. BOOM!"
+                            + "at: " + transform.position.ToString());
                         gameObject.SetActive(false);
                         isAlive = false;
                     }
