@@ -5,11 +5,10 @@ using System.Text;
 using UnityEngine;
 using Constants;
 using Global;
+using Assets.Scripts.Behaviors;
 
-namespace Behaviors
-{
-    public static class AIBehaviors
-    {
-        
+namespace Behaviors {
+    public static class AIBehaviors : VehicleBehaviors {
+
     }
 }
