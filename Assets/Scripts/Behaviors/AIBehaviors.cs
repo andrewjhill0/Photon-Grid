@@ -8,7 +8,7 @@ using Global;
 using Assets.Scripts.Behaviors;
 
 namespace Behaviors {
-    public static class AIBehaviors : VehicleBehaviors {
+    public class AIBehaviors : VehicleBehaviors {
 
     }
 }
