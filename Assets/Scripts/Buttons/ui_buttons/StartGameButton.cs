@@ -5,27 +5,22 @@ using Global;
 using UnityEngine.UI;
 using UnityEngine.Networking.Match;
 
-namespace Buttons
-{
-    public class StartGameButton : MonoBehaviour
-    {
+namespace Buttons {
+    public class StartGameButton : MonoBehaviour {
         public int numPlayers = 0;
         public GameObject gameStatePrefab;
 
         // Use this for initialization
-        void Start()
-        {
+        void Start() {
 
         }
 
         // Update is called once per frame
-        void Update()
-        {
+        void Update() {
 
         }
 
-        public void startSinglePlayerHosting()
-        {
+        public void startSinglePlayerHosting() {
             GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().setSettings();
             NetworkManager.singleton.StartHost();
             NetworkManager.singleton.matchSize = (uint) GameObject.FindGameObjectWithTag(GlobalTags.GAME_SETTINGS_OBJECT).GetComponent<GameSettings>().maxHumanPlayers;
@@ -34,14 +29,12 @@ namespace Buttons
             NetworkManager.singleton.ServerChangeScene(GlobalTags.LOADING_SCREEN);
         }
 
-        public void startSinglePlayerGame()
-        {
+        public void startSinglePlayerGame() {
 
             NetworkManager.singleton.ServerChangeScene(GlobalTags.GAME_SCREEN);
         }
 
-        public void updateNumPlayers()
-        {
+        public void updateNumPlayers() {
             numPlayers = GameObject.FindGameObjectsWithTag(GlobalTags.PLAYER).Length;
         }
     }

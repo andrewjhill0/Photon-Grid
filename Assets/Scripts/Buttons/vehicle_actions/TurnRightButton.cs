@@ -7,8 +7,7 @@ using Behaviors;
 using Global;
 using Assets.Scripts.Buttons;
 
-namespace Buttons
-{
+namespace Buttons {
     public class TurnRightButton : TurnButton {
         public override void turn() {
             GameObject playerObject;

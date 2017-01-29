@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Buttons
-{
-    public abstract class VehicleActionButton : Button
-    {
+namespace Assets.Scripts.Buttons {
+    public abstract class VehicleActionButton : Button {
         // Use this for initialization
         protected override void Start() {
 
