@@ -4,12 +4,13 @@ using Controllers;
 using Global;
 using Constants;
 using UnityEngine.Networking;
+using Assets.Scripts.Camera;
 
 namespace Controllers {
-	public class CameraController : MonoBehaviour {
+	public class CameraController : CameraMonoBehaviour {
 
 		private GameObject player;
-		private PlayerController playerController;  
+		private PlayerController playerController;
 		private bool inBirdsEyeView = false;
 		
 		void Start () {
@@ -17,7 +18,7 @@ namespace Controllers {
             playerController = player.GetComponent<PlayerController>();
 		}
 
-        // we want to use LateUpdate() because it is always executed after all the other Update()'s called on this frame.  
+        // we want to use LateUpdate() because it is always executed after all the other Update()'s called on this frame.
         // Since this is a follow camera, we want to follow the updated movements
 		void LateUpdate () {
 
