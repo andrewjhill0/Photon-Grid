@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Constants
-{
-    public static class CameraConstants
-    {
+namespace Constants {
+    /// <summary>
+    /// Constants used for camera-related tasks.
+    /// </summary>
+    public static class CameraConstants {
         public static readonly int STANDARD_CAMERA_DISTANCE_MULT = 125; //smaller is closer to the vehicle
         public static readonly Vector3 STANDARD_CAMERA_HEIGHT = new Vector3(0, 90, 0); //smaller is closer to the ground
         public static readonly Vector3 BIRDS_EYE_POSITION = new Vector3(0, 1454, 0); //looking down at the whole arena from a specific height
